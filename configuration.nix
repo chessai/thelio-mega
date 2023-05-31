@@ -57,7 +57,7 @@ in
     wireless = {
       enable = true;
       networks = {
-        inherit (secrets) attinternet.psk;
+        attinternet.psk = secrets.attinternet.psk;
       };
     };
 
