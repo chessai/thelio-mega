@@ -1,9 +1,13 @@
+let
+  disks = [ "/dev/nvme0n1" ];
+in
 {
-  disks,
-  ...
-}:
+  #fileSystems."/" =
+  #  { device = "thelio-mega/data";
+  #    fsType = "zfs";
+  #    options = [ "zfsutil" ];
+  #  };
 
-{
   disko.devices = {
     disk.x = {
       type = "disk";
@@ -14,10 +18,10 @@
         partitions = [
           {
             name = "ESP";
-            start = "0";
+            start = "1MiB";
             end = "512MiB";
-            fs-type = "fat32";
             bootable = true;
+            fs-type = "fat32";
             content = {
               type = "filesystem";
               format = "vfat";
@@ -28,7 +32,7 @@
           {
             name = "zfs";
             start = "512MiB";
-            end = "-40GiB";
+            end = "-32GiB";
             content = {
               type = "zfs";
               pool = "zroot";
@@ -37,9 +41,8 @@
 
           {
             name = "swap";
-            start = "-40GiB";
+            start = "-32GiB";
             end = "100%";
-            part-type = "primary";
             content = {
               type = "swap";
             };
@@ -51,56 +54,67 @@
     zpool = {
       zroot = {
         type = "zpool";
-        mode = "mirror";
+        mountpoint = "/"; #null;
+        postCreateHook = "zfs snapshot zroot@blank";
         rootFsOptions = {
           compression = "lz4";
-          "com.sun:auto-snapshot" = "false";
+          acltype = "posixacl";
         };
-        mountpoint = "/";
-        postCreateHook = "zfs snapshot zroot@blank";
-
-        datasets = {
-          zfs_fs = {
-            type = "zfs_fs";
-            mountpoint = "/zfs_fs";
-            options."com.sun:auto-snapshot" = "true";
-          };
-          zfs_unmounted_fs = {
-            type = "zfs_fs";
-            options.mountpoint = "none";
-          };
-          zfs_legacy_fs = {
-            type = "zfs_fs";
-            options.mountpoint = "legacy";
-            mountpoint = "/zfs_legacy_fs";
-          };
-          zfs_testvolume = {
-            type = "zfs_volume";
-            size = "10M";
-            content = {
-              type = "filesystem";
-              format = "ext4";
-              mountpoint = "/ext4onzfs";
+        datasets =
+          let
+            dataset = mountpoint: {
+              options = {
+                canmount = "on";
+                compression = "lz4";
+                dnodesize = "auto";
+                normalization = "formD";
+                xattr = "sa";
+                inherit mountpoint;
+              };
+              type = "zfs_fs";
             };
+          in
+          {
+            "data" = dataset "/";
           };
-          encrypted = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "none";
-              encryption = "aes-256-gcm";
-              keyformat = "passphrase";
-              keylocation = "file:///tmp/secret.key";
+          /*
+            "data/etc" = dataset "/etc";
+            "data/home" = dataset "/home";
+            "data/var" = dataset "/var";
+            "data/var/backup" = dataset "/var/backup";
+            "data/var/lib" = dataset "/var/lib";
+            "data/var/log" = dataset "/var/log";
+            "nixos" = {
+              options = {
+                canmount = "off";
+                mountpoint = "none";
+              };
+              type = "zfs_fs";
             };
-            postCreateHook = ''
-              zfs set keylocation="prompt" "zroot/$name";
-            '';
-          };
-          "encrypted/test" = {
-            type = "zfs_fs";
-            mountpoint = "/zfs_crypted";
-          };
-        };
+            "nixos/nix" = dataset "/nix";
+            "nixos/nix/store" = {
+              options = {
+                atime = "off";
+                canmount = "on";
+                mountpoint = "/nix/store";
+              };
+              type = "zfs_fs";
+            };
+            "nixos/nix/var" = dataset "/nix/var";
+            "reserved" = {
+              # zfs uses copy on write and requires some free space to delete files when the disk is completely filled
+              options = {
+                canmount = "off";
+                mountpoint = "none";
+                reservation = "5GiB";
+              };
+              type = "zfs_fs";
+            };
+          };*/
       };
     };
   };
+
+  # we provide our own hardware-configuration.nix
+  # disko.enableConfig = false;
 }

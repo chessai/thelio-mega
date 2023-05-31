@@ -15,13 +15,24 @@
     system = "x86_64-linux";
   in
   {
-    nixosConfigurations.thelio-mega = nixpkgs.lib.nixosSystem {
-      inherit system;
-      modules = [
-        nixos-hardware.nixosModules.system76
-        disko.nixosModules.disko
-        ./configuration.nix
-      ];
+    diskoConfigurations.thelio-mega = import ./disk-config.nix;
+
+    nixosConfigurations = {
+      thelio-mega = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          nixos-hardware.nixosModules.system76
+          disko.nixosModules.disko
+          ./configuration.nix
+        ];
+      };
+
+      iso = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./iso.nix
+        ];
+      };
     };
   };
 }
