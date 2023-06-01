@@ -1,4 +1,4 @@
-{ pkgs, modulesPath, ... }:
+{ pkgs, modulesPath, config, ... }:
 
 let
   secrets = import ./secrets.nix;
@@ -8,6 +8,7 @@ in
     (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk-config.nix
+    #./file-systems.nix
   ];
 
   boot = {
@@ -65,9 +66,11 @@ in
       enable = true;
     };
 
-    hostId = "17e169db";
-    hostName = "chessai-thelio_mega";
+    hostId = "8425e349";
+    hostName = "thelio_mega";
   };
+
+  #services.timesyncd.enable = false;
 
   environment.systemPackages = [
     pkgs.coreutils

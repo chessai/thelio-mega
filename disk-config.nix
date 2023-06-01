@@ -2,12 +2,6 @@ let
   disks = [ "/dev/nvme0n1" ];
 in
 {
-  #fileSystems."/" =
-  #  { device = "thelio-mega/data";
-  #    fsType = "zfs";
-  #    options = [ "zfsutil" ];
-  #  };
-
   disko.devices = {
     disk.x = {
       type = "disk";
@@ -54,10 +48,11 @@ in
     zpool = {
       zroot = {
         type = "zpool";
-        mountpoint = "/"; #null;
-        postCreateHook = "zfs snapshot zroot@blank";
+        mountpoint = null; #"/"; # TODO: flip this next?
+        mountRoot = "/mnt";
+        postCreateHook = "zfs snapshot zroot@genesis";
         rootFsOptions = {
-          compression = "lz4";
+          compression = "on";
           acltype = "posixacl";
         };
         datasets =
@@ -65,25 +60,26 @@ in
             dataset = mountpoint: {
               options = {
                 canmount = "on";
-                compression = "lz4";
+                compression = "on";
                 dnodesize = "auto";
                 normalization = "formD";
                 xattr = "sa";
-                inherit mountpoint;
+                #inherit mountpoint;
+                mountpoint = "legacy"; # TODO remove this next
               };
               type = "zfs_fs";
+              inherit mountpoint;
             };
           in
           {
             "data" = dataset "/";
-          };
-          /*
             "data/etc" = dataset "/etc";
             "data/home" = dataset "/home";
             "data/var" = dataset "/var";
             "data/var/backup" = dataset "/var/backup";
             "data/var/lib" = dataset "/var/lib";
             "data/var/log" = dataset "/var/log";
+
             "nixos" = {
               options = {
                 canmount = "off";
@@ -96,13 +92,15 @@ in
               options = {
                 atime = "off";
                 canmount = "on";
-                mountpoint = "/nix/store";
+                mountpoint = "legacy";
               };
               type = "zfs_fs";
+              mountpoint = "/nix/store";
             };
             "nixos/nix/var" = dataset "/nix/var";
+
+            # zfs uses copy on write and requires some free space to delete files when the disk is completely filled
             "reserved" = {
-              # zfs uses copy on write and requires some free space to delete files when the disk is completely filled
               options = {
                 canmount = "off";
                 mountpoint = "none";
@@ -110,7 +108,28 @@ in
               };
               type = "zfs_fs";
             };
-          };*/
+          };
+
+/*
+tank/
+├── local
+│   └── nix
+├── system
+│   └── root
+└── user
+    └── home
+        ├── grahamc
+        └── gustav
+Or a separate dataset for /var:
+
+tank/
+├── local
+│   └── nix
+├── system
+│   ├── var
+│   └── root
+└── user
+*/
       };
     };
   };
