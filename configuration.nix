@@ -1,4 +1,4 @@
-{ pkgs, modulesPath, config, ... }:
+{ pkgs, lib, modulesPath, config, ... }:
 
 let
   secrets = import ./secrets.nix;
@@ -8,6 +8,7 @@ in
     (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk-config.nix
+    ./home
     #./file-systems.nix
   ];
 
@@ -52,8 +53,6 @@ in
     settings.PermitRootLogin = "without-password";
   };
 
-  users.users.root.openssh.authorizedKeys.keys = import ./chessai-ssh-keys.nix;
-
   networking = {
     wireless = {
       enable = true;
@@ -76,6 +75,99 @@ in
     pkgs.coreutils
     pkgs.util-linux
   ];
+
+  users.users.root = {
+    openssh.authorizedKeys.keys = import ./chessai-ssh-keys.nix;
+    hashedPassword = "$6$Dyx8c0/AKrDLP/ct$f.CJ6tp4DYGZvDpgH1ffbiIXYvrFM0/Czs41vP5MfJKywNYGtAGZvHaTWbBB/L6DrLVgpz7BTrIuLPWVkUDkE1";
+  };
+
+  users.users.chessai = {
+    description = "chessai";
+    isNormalUser = true;
+    uid = 1000;
+    createHome = true;
+    home = "/home/chessai";
+    extraGroups = [
+      "wheel"
+      "docker"
+    ];
+    hashedPassword = "$6$wA4C5Rij.J4xZHMn$cJjyAXP9KYpmAgRfTKooL5lKYtPvQ0DwErev4loNEIwka/pNjpJiPjU0XYI9ePUwWHzw.POPguYs56Ptm26Do0";
+  };
+
+  services.zfs = {
+    autoSnapshot.enable = true;
+  };
+
+  services.avahi.enable = true;
+
+  systemd.coredump.enable = true;
+
+  virtualisation.docker = {
+    enable = true;
+    storageDriver = "zfs";
+    autoPrune.enable = true;
+  };
+
+  nix = {
+    nixPath = [ "nixpkgs=${pkgs.path}" ];
+
+    gc.automatic = false;
+  };
+
+  nix.settings = {
+    trusted-users = [ "chessai" "root" ];
+
+    cores = 16;
+
+    substituters = [
+      # NixOS.org
+      "http://cache.nixos.org"
+
+      # clever
+      # "http://cache.earthtools.ca"
+
+      # IOG
+      "https://cache.iog.io"
+
+      # Kadena
+      "https://nixcache.chainweb.com"
+    ];
+
+    trusted-public-keys = [
+      # IOG
+      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+      "iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo="
+
+      # clever
+      # "c2d.localnet-1:YTVKcy9ZO3tqPNxRqeYEYxSpUH5C8ykZ9ImUKuugf4c="
+
+      # Kadena
+      "nixcache.chainweb.com:FVN503ABX9F8x8K0ptnc99XEz5SaA4Sks6kNcZn2pBY="
+    ];
+  };
+
+  nix.extraOptions = lib.mkOrder 1 ''
+    keep-outputs = true
+    keep-derivations = true
+    auto-optimise-store = false
+    experimental-features = nix-command flakes ca-derivations
+  '';
+
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+      allowBroken = false;
+      allowUnsupportedSystem = false;
+      permittedInsecurePackages = [];
+    };
+
+    overlays = [];
+  };
+
+  time = {
+    timeZone = "America/Chicago";
+    hardwareClockInLocalTime = false;
+  };
 
   system.stateVersion = "23.05";
 }

@@ -1,3 +1,5 @@
+{ lib, ... }:
+
 let
   disks = [ "/dev/nvme0n1" ];
 in
@@ -48,7 +50,7 @@ in
     zpool = {
       zroot = {
         type = "zpool";
-        mountpoint = null; #"/"; # TODO: flip this next?
+        mountpoint = null;
         mountRoot = "/mnt";
         postCreateHook = "zfs snapshot zroot@genesis";
         rootFsOptions = {
@@ -64,20 +66,26 @@ in
                 dnodesize = "auto";
                 normalization = "formD";
                 xattr = "sa";
-                #inherit mountpoint;
-                mountpoint = "legacy"; # TODO remove this next
+                mountpoint = "legacy";
+                "com.sun:auto-snapshot" = "true";
               };
               type = "zfs_fs";
               inherit mountpoint;
+            };
+
+            dontSnapshot = d: lib.recursiveUpdate d {
+              options."com.sun:auto-snapshot" = "false";
             };
           in
           {
             "data" = dataset "/";
             "data/etc" = dataset "/etc";
             "data/home" = dataset "/home";
+            "data/home/chessai" = dataset "/home/chessai";
             "data/var" = dataset "/var";
-            "data/var/backup" = dataset "/var/backup";
+            #"data/var/backup" = dataset "/var/backup";
             "data/var/lib" = dataset "/var/lib";
+            "data/var/lib/docker" = dontSnapshot (dataset "/var/lib/docker");
             "data/var/log" = dataset "/var/log";
 
             "nixos" = {
@@ -88,7 +96,7 @@ in
               type = "zfs_fs";
             };
             "nixos/nix" = dataset "/nix";
-            "nixos/nix/store" = {
+            "nixos/nix/store" = dontSnapshot {
               options = {
                 atime = "off";
                 canmount = "on";
@@ -98,6 +106,11 @@ in
               mountpoint = "/nix/store";
             };
             "nixos/nix/var" = dataset "/nix/var";
+
+            # coredumps are rather large, and can expire quickly,
+            # so that conflicts with zfs snapshots saving every byte,
+            # so it's on its own dataset with no snapshots
+            "data/coredumps" = dataset "/var/lib/systemd/coredump";
 
             # zfs uses copy on write and requires some free space to delete files when the disk is completely filled
             "reserved" = {
@@ -109,31 +122,7 @@ in
               type = "zfs_fs";
             };
           };
-
-/*
-tank/
-├── local
-│   └── nix
-├── system
-│   └── root
-└── user
-    └── home
-        ├── grahamc
-        └── gustav
-Or a separate dataset for /var:
-
-tank/
-├── local
-│   └── nix
-├── system
-│   ├── var
-│   └── root
-└── user
-*/
+        };
       };
     };
-  };
-
-  # we provide our own hardware-configuration.nix
-  # disko.enableConfig = false;
 }
