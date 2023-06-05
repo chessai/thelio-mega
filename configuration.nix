@@ -76,22 +76,30 @@ in
     pkgs.util-linux
   ];
 
-  users.users.root = {
-    openssh.authorizedKeys.keys = import ./chessai-ssh-keys.nix;
-    hashedPassword = "$6$Dyx8c0/AKrDLP/ct$f.CJ6tp4DYGZvDpgH1ffbiIXYvrFM0/Czs41vP5MfJKywNYGtAGZvHaTWbBB/L6DrLVgpz7BTrIuLPWVkUDkE1";
-  };
+  users = {
+    mutableUsers = false;
 
-  users.users.chessai = {
-    description = "chessai";
-    isNormalUser = true;
-    uid = 1000;
-    createHome = true;
-    home = "/home/chessai";
-    extraGroups = [
-      "wheel"
-      "docker"
-    ];
-    hashedPassword = "$6$wA4C5Rij.J4xZHMn$cJjyAXP9KYpmAgRfTKooL5lKYtPvQ0DwErev4loNEIwka/pNjpJiPjU0XYI9ePUwWHzw.POPguYs56Ptm26Do0";
+    users.root = {
+      openssh.authorizedKeys.keys = import ./chessai-ssh-keys.nix;
+      hashedPassword = "$6$Dyx8c0/AKrDLP/ct$f.CJ6tp4DYGZvDpgH1ffbiIXYvrFM0/Czs41vP5MfJKywNYGtAGZvHaTWbBB/L6DrLVgpz7BTrIuLPWVkUDkE1";
+    };
+
+    users.chessai = {
+      description = "chessai";
+      isNormalUser = true;
+      uid = 1000;
+      createHome = true;
+      home = "/home/chessai";
+      extraGroups = [
+        "wheel"
+        "docker"
+        "sway"
+        "video"
+        "plugdev"
+        "networkmanager"
+      ];
+      hashedPassword = "$6$wA4C5Rij.J4xZHMn$cJjyAXP9KYpmAgRfTKooL5lKYtPvQ0DwErev4loNEIwka/pNjpJiPjU0XYI9ePUwWHzw.POPguYs56Ptm26Do0";
+    };
   };
 
   services.zfs = {
@@ -167,6 +175,42 @@ in
   time = {
     timeZone = "America/Chicago";
     hardwareClockInLocalTime = false;
+  };
+
+  programs.sway.enable = true;
+
+  # screen sharing section
+  services.pipewire.enable = true;
+
+  xdg.portal = {
+    enable = true;
+    gtkUsePortal = true;
+    extraPortals = with pkgs;
+      [ xdg-desktop-portal-wlr xdg-desktop-portal-gtk ];
+  };
+  # end screen sharing section
+
+  fonts = {
+    fonts = with pkgs; [
+      dejavu_fonts
+      font-awesome
+      freefont_ttf
+      liberation_ttf_v2
+      lmodern
+      nerdfonts
+      noto-fonts
+      noto-fonts-cjk
+      noto-fonts-emoji
+      noto-fonts-extra
+      powerline-fonts
+      source-han-sans
+      source-han-sans-japanese
+      source-han-serif-japanese
+    ];
+    #fontconfig.defaultFonts = {
+    #  serif = [ "Noto Serif" "Source Han Serif" ];
+    #  sansSerif = [ "Noto Sans" "Source Han Sans" ];
+    #};
   };
 
   system.stateVersion = "23.05";
