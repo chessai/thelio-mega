@@ -50,7 +50,6 @@ in
 
   services.openssh = {
     enable = true;
-    settings.PermitRootLogin = "without-password";
   };
 
   networking = {
@@ -68,8 +67,6 @@ in
     hostId = "8425e349";
     hostName = "thelio_mega";
   };
-
-  #services.timesyncd.enable = false;
 
   environment.systemPackages = [
     pkgs.coreutils
@@ -91,14 +88,21 @@ in
       createHome = true;
       home = "/home/chessai";
       extraGroups = [
-        "wheel"
+        "adbusers"
+        "audio"
         "docker"
-        "sway"
-        "video"
-        "plugdev"
+        "libvirtd"
         "networkmanager"
+        "plugdev"
+        "sway"
+        "users"
+        "vboxusers"
+        "video"
+        "wheel"
+        "wireshark"
       ];
       hashedPassword = "$6$wA4C5Rij.J4xZHMn$cJjyAXP9KYpmAgRfTKooL5lKYtPvQ0DwErev4loNEIwka/pNjpJiPjU0XYI9ePUwWHzw.POPguYs56Ptm26Do0";
+      openssh.authorizedKeys.keys = import ./chessai-ssh-keys.nix;
     };
   };
 
@@ -137,6 +141,9 @@ in
       # IOG
       "https://cache.iog.io"
 
+      # IOG-associated?
+      "https://cache.zw3rk.com"
+
       # Kadena
       "https://nixcache.chainweb.com"
     ];
@@ -146,6 +153,9 @@ in
       "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
       "iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo="
 
+      # IOG-associated?
+      "loony-tools:pr9m4BkM/5/eSTZlkQyRt57Jz7OMBxNSUiMC4FkcNfk="
+      
       # clever
       # "c2d.localnet-1:YTVKcy9ZO3tqPNxRqeYEYxSpUH5C8ykZ9ImUKuugf4c="
 
@@ -177,14 +187,21 @@ in
     hardwareClockInLocalTime = false;
   };
 
-  programs.sway.enable = true;
+  services.dbus.enable = true;
+
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+  };
+
+  security.polkit.enable = true;
 
   # screen sharing section
   services.pipewire.enable = true;
 
   xdg.portal = {
     enable = true;
-    gtkUsePortal = true;
+    wlr.enable = true;
     extraPortals = with pkgs;
       [ xdg-desktop-portal-wlr xdg-desktop-portal-gtk ];
   };
@@ -211,6 +228,12 @@ in
     #  serif = [ "Noto Serif" "Source Han Serif" ];
     #  sansSerif = [ "Noto Sans" "Source Han Sans" ];
     #};
+  };
+
+  hardware = {
+    bluetooth.enable = true;
+
+    pulseaudio.enable = true;
   };
 
   system.stateVersion = "23.05";

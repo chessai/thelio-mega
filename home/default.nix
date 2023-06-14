@@ -18,6 +18,7 @@
     imports = [
       ./alacritty.nix
       ./bash.nix
+      ./chromium.nix
       ./direnv.nix
       ./git.nix
       ./jq.nix
@@ -31,6 +32,7 @@
       (aspellWithDicts (d: [ d.en ]))
       bind
       cabal-install
+      cockatrice
       discord
       fd
       file
@@ -48,11 +50,13 @@
       nmap
       parallel
       parted
+      pavucontrol
       pdfpc # pdf presentation viewer run with -s -S
       ripgrep
       rofi
       signal-desktop
       silver-searcher
+      slack
       slurp
       spotify
       swaylock-effects

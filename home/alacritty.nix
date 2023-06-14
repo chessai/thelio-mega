@@ -1,5 +1,8 @@
-{ lib, /*colors, */ ... }:
+{ lib, ... }:
 
+let
+  colors = import ./colors.nix { inherit lib; };
+in
 {
   programs.alacritty = {
     enable = true;
@@ -10,12 +13,12 @@
       font = {
         size = 18.0;
 
-        #colors = {
-        #  primary = {
-        #    background = colors.hex colors.dark;
-        #    foreground = colors.hex colors.light;
-        #  };
-        #};
+        colors = {
+          primary = {
+            background = colors.hex colors.dark;
+            foreground = colors.hex colors.light;
+          };
+        };
 
         normal = {
           family = "Fira Code Nerd Font";
