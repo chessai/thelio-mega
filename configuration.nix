@@ -2,6 +2,19 @@
 
 let
   secrets = import ./secrets.nix;
+
+  hsDocPackage = p: lib.getOutput "doc" p // {
+    pname = p.identifier.name;
+    haddockDir = p.haddockDir;
+  };
+
+  bruh = packageInputs: builtins.map hsDocPackage (flatLibDepends {
+    depends = packageInputs;
+    libs = [];
+    pkgconfig = [];
+    frameworks = [];
+    doExactConfig = false;
+  });
 in
 {
   imports = [
@@ -9,7 +22,6 @@ in
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk-config.nix
     ./home
-    #./file-systems.nix
   ];
 
   boot = {
@@ -155,7 +167,7 @@ in
 
       # IOG-associated?
       "loony-tools:pr9m4BkM/5/eSTZlkQyRt57Jz7OMBxNSUiMC4FkcNfk="
-      
+
       # clever
       # "c2d.localnet-1:YTVKcy9ZO3tqPNxRqeYEYxSpUH5C8ykZ9ImUKuugf4c="
 
@@ -228,6 +240,11 @@ in
     #  serif = [ "Noto Serif" "Source Han Serif" ];
     #  sansSerif = [ "Noto Sans" "Source Han Sans" ];
     #};
+  };
+
+  services.hoogle = {
+    port = config.services.hoogle.port.default;
+    packages = hp: [ pkgs.chainweb-node ];
   };
 
   hardware = {

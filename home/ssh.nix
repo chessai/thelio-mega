@@ -4,8 +4,8 @@
     extraConfig = ''
       Host athena
         User chessai
-        Port 2202
-        HostName 76.234.69.149
+        Port 22
+        HostName 67.181.169.43
     '';
   };
 }

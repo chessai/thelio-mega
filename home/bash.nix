@@ -5,9 +5,9 @@
     enable = true;
 
     historySize = 10 * 1000;
-    historyFileSize = 10 * 10 * 1000;
+    historyFileSize = 1000 * 1000;
     historyControl = [ "ignoredups" ];
-    historyIgnore = [ "ls" "cd" "exit" ];
+    historyIgnore = [ "ls" "cd" "exit" "vi" "vim" "nvim" ];
 
     shellAliases = {
       ".0" = "cd .";
@@ -25,6 +25,7 @@
 
       git = "${pkgs.gitAndTools.gitFull}/bin/git";
       gs = "${pkgs.gitAndTools.gitFull}/bin/git status";
+      gc = "${pkgs.gitAndTools.gitFull}/bin/git clone git@github.com:$1/$2";
       git-initial-commit = "${pkgs.gitAndTools.gitFull}/bin/git commit -m \"Creō ā nihilō\"";
 
       gist = "gist --private";

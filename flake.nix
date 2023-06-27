@@ -17,6 +17,11 @@
       url = "github:nix-community/home-manager/release-23.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nvim-configs = {
+      url = "github:chessai/nvim-configs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -27,6 +32,7 @@
       nix-colors,
       nixpkgs,
       nixos-hardware,
+      nvim-configs,
       self,
       ...
     }:
@@ -45,6 +51,7 @@
           extract.nixosModules.${system}.extract
           home-manager.nixosModules.home-manager
           ./configuration.nix
+          ({ ... }: { home-manager.users.chessai.home.packages = [ nvim-configs.packages.${system}.neovim ]; })
         ];
       };
 

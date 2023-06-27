@@ -24,7 +24,6 @@
       ./jq.nix
       ./ssh.nix
       ./tmux.nix
-      ./vim.nix
       ./wayland.nix
     ];
 
