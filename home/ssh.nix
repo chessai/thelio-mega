@@ -4,8 +4,8 @@
     extraConfig = ''
       Host athena
         User chessai
-        Port 22
-        HostName 67.181.169.43
+        Port 2202
+        HostName newartisans.hopto.org
     '';
   };
 }
