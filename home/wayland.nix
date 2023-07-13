@@ -70,18 +70,18 @@ in
         "${modifier}+Shift+8" = "move container to workspace number 8, workspace number 8";
         "${modifier}+Shift+9" = "move container to workspace number 9, workspace number 9";
 
-	"${modifier}+j" = "focus left";
-	"${modifier}+k" = "focus down";
-	"${modifier}+l" = "focus up";
-	"${modifier}+Semicolon" = "focus right";
+        "${modifier}+j" = "focus left";
+        "${modifier}+k" = "focus down";
+        "${modifier}+l" = "focus up";
+        "${modifier}+Semicolon" = "focus right";
 
-	"${modifier}+Left" = "focus left";
-	"${modifier}+Down" = "focus down";
-	"${modifier}+Up" = "focus up";
-	"${modifier}+Right" = "focus right";
+        "${modifier}+Left" = "focus left";
+        "${modifier}+Down" = "focus down";
+        "${modifier}+Up" = "focus up";
+        "${modifier}+Right" = "focus right";
 
         "${modifier}+h" = "split h";
-	"${modifier}+v" = "split v";
+        "${modifier}+v" = "split v";
         #"${modifier}+Shift+s" = "move scratchpad";
         #"${modifier}+s" = "scratchpad show";
       };
