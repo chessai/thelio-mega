@@ -3,18 +3,18 @@
 let
   secrets = import ./secrets.nix;
 
-  hsDocPackage = p: lib.getOutput "doc" p // {
-    pname = p.identifier.name;
-    haddockDir = p.haddockDir;
-  };
+  #hsDocPackage = p: lib.getOutput "doc" p // {
+  #  pname = p.identifier.name;
+  #  haddockDir = p.haddockDir;
+  #};
 
-  bruh = packageInputs: builtins.map hsDocPackage (flatLibDepends {
-    depends = packageInputs;
-    libs = [];
-    pkgconfig = [];
-    frameworks = [];
-    doExactConfig = false;
-  });
+  #bruh = packageInputs: builtins.map hsDocPackage (flatLibDepends {
+  #  depends = packageInputs;
+  #  libs = [];
+  #  pkgconfig = [];
+  #  frameworks = [];
+  #  doExactConfig = false;
+  #});
 in
 {
   imports = [
@@ -254,4 +254,28 @@ in
   };
 
   system.stateVersion = "23.05";
+
+  services.chainweb-node = {
+    enable = true;
+    logLevel = "error";
+    headerStream = true;
+    bootstrapReachability = 0;
+    #configFile = ./chainweb-node-config.yaml;
+    #replay = true;
+  };
+
+  security.pam.loginLimits = [
+    {
+      domain = "*";
+      item = "nofile";
+      type = "-";
+      value = builtins.toString (10 * 1000 * 1000);
+    }
+  ];
+
+  programs.java.enable = true;
+  programs.steam = {
+    enable = true;
+    #package = pkgs.steam.override { withJava = true; };
+  };
 }

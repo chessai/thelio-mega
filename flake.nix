@@ -22,6 +22,9 @@
       url = "github:chessai/nvim-configs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    chainwebNode.url = "github:kadena-io/chainweb-node";
+    chainwebModule.url = "github:kadena-io/chainweb-node-nixos-module";
   };
 
   outputs =
@@ -33,6 +36,8 @@
       nixpkgs,
       nixos-hardware,
       nvim-configs,
+      chainwebModule,
+      chainwebNode,
       self,
       ...
     }:
@@ -52,6 +57,14 @@
           home-manager.nixosModules.home-manager
           ./configuration.nix
           ({ ... }: { home-manager.users.chessai.home.packages = [ nvim-configs.packages.${system}.neovim ]; })
+          {
+            nixpkgs.overlays = [
+              (self: super: {
+                chainweb-node = chainwebNode.packages.${system}.default;
+              })
+            ];
+          }
+          chainwebModule.nixosModules.chainweb-node
         ];
       };
 
