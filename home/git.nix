@@ -63,6 +63,9 @@ in
     extraConfig = {
       pull.rebase = true;
 
+      # no more -u
+      push.autoSetupRemote = true;
+
       init.defaultBranch = "main";
     };
   };
