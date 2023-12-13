@@ -37,6 +37,8 @@
       ts = "nix-shell -E 'let pkgs = import <nixpkgs> {}; in pkgs.mkShell { buildInputs = with pkgs; [ nodejs-13_x yarn nodePackages.typescript ]; }'";
 
       ":q" = "exit";
+
+      "xdg-open" = "wslview";
     };
 
     # Only source this once.
@@ -48,6 +50,7 @@
       export LC_CTYPE="en_US.UTF-8";
       export EDITOR="nvim";
       export VISUAL="nvim";
+      export BROWSER="wslview";
 
       set -o vi
 
