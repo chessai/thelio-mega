@@ -47,8 +47,8 @@ in
         "${modifier}+Return" = "exec alacritty";
         "${modifier}+b" = "exec chromium";
         #"${modifier}+p" = "mode power";
-        #"${modifier}+n" = "exec makoctl dismiss";
-        #"${modifier}+Shift+n" = "exec makoctl dismiss -a";
+        "${modifier}+n" = "exec makoctl dismiss";
+        "${modifier}+Shift+n" = "exec makoctl dismiss -a";
 
         "${modifier}+1" = "workspace number 1";
         "${modifier}+2" = "workspace number 2";
@@ -84,6 +84,8 @@ in
         "${modifier}+v" = "split v";
         #"${modifier}+Shift+s" = "move scratchpad";
         #"${modifier}+s" = "scratchpad show";
+
+        "Print" = "exec grim -g \"$(slurp)\"";
       };
       workspaceAutoBackAndForth = true;
       modes = {
