@@ -51,7 +51,7 @@ in
       zroot = {
         type = "zpool";
         mountpoint = null;
-        mountRoot = "/mnt";
+        #mountRoot = "/mnt";
         postCreateHook = "zfs snapshot zroot@genesis";
         rootFsOptions = {
           compression = "on";

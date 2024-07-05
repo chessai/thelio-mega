@@ -151,10 +151,10 @@ in
       # "http://cache.earthtools.ca"
 
       # IOG
-      "https://cache.iog.io"
+      #"https://cache.iog.io"
 
       # IOG-associated?
-      "https://cache.zw3rk.com"
+      #"https://cache.zw3rk.com"
 
       # Kadena
       "https://nixcache.chainweb.com"
@@ -162,11 +162,11 @@ in
 
     trusted-public-keys = [
       # IOG
-      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-      "iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo="
+      #"hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+      #"iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo="
 
       # IOG-associated?
-      "loony-tools:pr9m4BkM/5/eSTZlkQyRt57Jz7OMBxNSUiMC4FkcNfk="
+      #"loony-tools:pr9m4BkM/5/eSTZlkQyRt57Jz7OMBxNSUiMC4FkcNfk="
 
       # clever
       # "c2d.localnet-1:YTVKcy9ZO3tqPNxRqeYEYxSpUH5C8ykZ9ImUKuugf4c="
@@ -210,7 +210,6 @@ in
 
   # screen sharing section
   services.pipewire.enable = true;
-
   xdg.portal = {
     enable = true;
     wlr.enable = true;
@@ -220,7 +219,7 @@ in
   # end screen sharing section
 
   fonts = {
-    fonts = with pkgs; [
+    packages = with pkgs; [
       dejavu_fonts
       font-awesome
       freefont_ttf
@@ -255,14 +254,15 @@ in
 
   system.stateVersion = "23.05";
 
-  services.chainweb-node = {
+  /*services.chainweb-node = {
     enable = true;
-    logLevel = "error";
+    logLevel = "info";
     headerStream = true;
     bootstrapReachability = 0;
+    subdir = "mainnet01-sigma-compacted";
     #configFile = ./chainweb-node-config.yaml;
     #replay = true;
-  };
+  };*/
 
   security.pam.loginLimits = [
     {

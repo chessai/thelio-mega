@@ -14,17 +14,20 @@
     nix-colors.url = "github:misterio77/nix-colors";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-23.05";
+      url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nvim-configs = {
       url = "github:chessai/nvim-configs";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    chainwebNode.url = "github:kadena-io/chainweb-node";
+    chainwebNode.url = "github:kadena-io/chainweb-node/bbaa5f5ebd57947d7e20a131cf242be4cf66b2a1";
     chainwebModule.url = "github:kadena-io/chainweb-node-nixos-module";
+
+    jj = {
+      url = "github:martinvonz/jj";
+    };
   };
 
   outputs =
@@ -38,6 +41,7 @@
       nvim-configs,
       chainwebModule,
       chainwebNode,
+      jj,
       self,
       ...
     }:
@@ -56,7 +60,12 @@
           extract.nixosModules.${system}.extract
           home-manager.nixosModules.home-manager
           ./configuration.nix
-          ({ ... }: { home-manager.users.chessai.home.packages = [ nvim-configs.packages.${system}.neovim ]; })
+          ({ ... }: {
+            home-manager.users.chessai.home.packages = [
+              nvim-configs.packages.${system}.neovim
+              jj.packages.${system}.jujutsu
+            ];
+          })
           {
             nixpkgs.overlays = [
               (self: super: {

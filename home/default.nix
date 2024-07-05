@@ -24,11 +24,13 @@
       ./jq.nix
       ./ssh.nix
       ./tmux.nix
+      ./vscode.nix
       ./wayland.nix
     ];
 
     home.packages = with pkgs; [
       (aspellWithDicts (d: [ d.en ]))
+      awscli2
       bind
       cabal-install
       cockatrice
@@ -60,6 +62,7 @@
       spotify
       swaylock-effects
       tcpdump
+      telegram-desktop
       tldr
       tmux
       tree

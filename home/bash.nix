@@ -17,8 +17,8 @@
       ".4" = "cd ../../../..";
       ".5" = "cd ../../../../..";
 
-      ls = "${pkgs.exa}/bin/exa -G --color auto -a -s type";
-      ll = "${pkgs.exa}/bin/exa -l --color always -a -s type";
+      ls = "${pkgs.eza}/bin/eza -G --color auto -a -s type";
+      ll = "${pkgs.eza}/bin/eza -l --color always -a -s type";
       cat = "${pkgs.bat}/bin/bat -pp --theme=\"Nord\"";
       grep = "${pkgs.ripgrep}/bin/rg";
       rg = "${pkgs.ripgrep}/bin/rg";
