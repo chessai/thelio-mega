@@ -3,7 +3,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs";
 
     disko = {
-      url = "github:nix-community/disko";
+      url = "github:nix-community/disko/4677f6c53482a8b01ee93957e3bdd569d51261d6";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
