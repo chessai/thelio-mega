@@ -18,6 +18,10 @@ let
   dontSnapshot = d: lib.recursiveUpdate d {
     options."com.sun:auto-snapshot" = "false";
   };
+
+  dontMount = d: lib.recursiveUpdate d {
+    options.canmount = "off";
+  };
 in
 {
   disko.devices = {
@@ -92,8 +96,8 @@ in
         mountpoint = null;
         postCreateHook = "zfs snapshot zstorage@genesis";
         rootFsOptions = {
-          compression = "on";
-          acltype = "posixacl";
+          #compression = "on";
+          #acltype = "posixacl";
           canmount = "off";
         };
         datasets =
@@ -102,18 +106,18 @@ in
           in
           {
             "storage" = dataset dataRoot;
-            "storage/chainweb-db" = dontSnapshot (dataset "${dataRoot}/chainweb-db");
-            "storage/chainweb-db-compacted" = dataset "${dataRoot}/chainweb-db-compacted";
+            #"storage/chainweb-db" = dontMount (dontSnapshot (dataset "${dataRoot}/chainweb-db"));
+            #"storage/chainweb-db-compacted" = dontMount (dataset "${dataRoot}/chainweb-db-compacted");
 
             # zfs uses copy on write and requires some free space to delete files when the disk is completely filled
-            "reserved" = {
-              options = {
-                canmount = "off";
-                mountpoint = "none";
-                reservation = "5GiB";
-              };
-              type = "zfs_fs";
-            };
+            #"reserved" = {
+            #  options = {
+            #    canmount = "off";
+            #    mountpoint = "none";
+            #    reservation = "5GiB";
+            #  };
+            #  type = "zfs_fs";
+            #};
           };
       };
 
