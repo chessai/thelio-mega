@@ -1,27 +1,28 @@
 { lib, ... }:
 
+let
+  dataset = mountpoint: {
+    options = {
+      canmount = "on";
+      compression = "on";
+      dnodesize = "auto";
+      normalization = "formD";
+      xattr = "sa";
+      mountpoint = "legacy";
+      "com.sun:auto-snapshot" = "true";
+    };
+    type = "zfs_fs";
+    inherit mountpoint;
+  };
+
+  dontSnapshot = d: lib.recursiveUpdate d {
+    options."com.sun:auto-snapshot" = "false";
+  };
+in
 {
   disko.devices = {
-    disk.y = {
-      type = "disk";
-      device = "/dev/nvme1n1";
-      content = {
-        type = "table";
-        format = "gpt";
-        partitions = [
-          {
-            name = "zfs";
-            start = "1MiB";
-            end = "100%";
-            content = {
-              type = "zfs";
-              pool = "zroot";
-            };
-          }
-        ];
-      };
-    };
 
+    # 1TB M2
     disk.x = {
       type = "disk";
       device = "/dev/nvme0n1";
@@ -64,7 +65,58 @@
       };
     };
 
+    # 4TB M2
+    disk.y = {
+      type = "disk";
+      device = "/dev/nvme1n1";
+      content = {
+        type = "table";
+        format = "gpt";
+        partitions = [
+          {
+            name = "zfs";
+            start = "1MiB";
+            end = "100%";
+            content = {
+              type = "zfs";
+              pool = "zstorage";
+            };
+          }
+        ];
+      };
+    };
+
     zpool = {
+      zstorage = {
+        type = "zpool";
+        mountpoint = null;
+        postCreateHook = "zfs snapshot zstorage@genesis";
+        rootFsOptions = {
+          compression = "on";
+          acltype = "posixacl";
+          canmount = "off";
+        };
+        datasets =
+          let
+            dataRoot = "/mnt/data";
+          in
+          {
+            "storage" = dataset dataRoot;
+            "storage/chainweb-db" = dontSnapshot (dataset "${dataRoot}/chainweb-db");
+            "storage/chainweb-db-compacted" = dataset "${dataRoot}/chainweb-db-compacted";
+
+            # zfs uses copy on write and requires some free space to delete files when the disk is completely filled
+            "reserved" = {
+              options = {
+                canmount = "off";
+                mountpoint = "none";
+                reservation = "5GiB";
+              };
+              type = "zfs_fs";
+            };
+          };
+      };
+
       zroot = {
         type = "zpool";
         mountpoint = null;
@@ -75,25 +127,6 @@
           acltype = "posixacl";
         };
         datasets =
-          let
-            dataset = mountpoint: {
-              options = {
-                canmount = "on";
-                compression = "on";
-                dnodesize = "auto";
-                normalization = "formD";
-                xattr = "sa";
-                mountpoint = "legacy";
-                "com.sun:auto-snapshot" = "true";
-              };
-              type = "zfs_fs";
-              inherit mountpoint;
-            };
-
-            dontSnapshot = d: lib.recursiveUpdate d {
-              options."com.sun:auto-snapshot" = "false";
-            };
-          in
           {
             "data" = dataset "/";
             "data/etc" = dataset "/etc";
