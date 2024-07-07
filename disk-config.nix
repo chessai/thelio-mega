@@ -70,67 +70,40 @@ in
     };
 
     # 4TB M2
+    #
+    # I just use ext4 here because I don't care about redundancy or
+    # recoverability.
     disk.y = {
       type = "disk";
       device = "/dev/nvme1n1";
       content = {
-        type = "table";
-        format = "gpt";
-        partitions = [
-          {
-            name = "zfs";
-            start = "1MiB";
-            end = "100%";
+        type = "gpt";
+        partitions = {
+          storage = {
+            size = "100%";
             content = {
-              type = "zfs";
-              pool = "zstorage";
+              type = "filesystem";
+              format = "ext4";
+              mountpoint = "/data";
             };
-          }
-        ];
+          };
+        };
+        #partitions = [
+        #  {
+        #    name = "storage";
+        #    start = "1MiB";
+        #    end = "100%";
+        #    content = {
+        #      type = "filesystem";
+        #      format = "ext4";
+        #      mountpoint = "/data";
+        #    };
+        #  }
+        #];
       };
     };
 
     zpool = {
-      zstorage = {
-        type = "zpool";
-        mountpoint = "/data";
-        rootFsOptions = {
-          canmount = "off";
-        };
-        datasets =
-          {
-          };
-      };
-      /*zstorage = {
-        type = "zpool";
-        mountpoint = null;
-        postCreateHook = "zfs snapshot zstorage@genesis";
-        rootFsOptions = {
-          #compression = "on";
-          #acltype = "posixacl";
-          canmount = "off";
-        };
-        datasets =
-          let
-            dataRoot = "/mnt/data";
-          in
-          {
-            "storage" = dataset dataRoot;
-            #"storage/chainweb-db" = dontMount (dontSnapshot (dataset "${dataRoot}/chainweb-db"));
-            #"storage/chainweb-db-compacted" = dontMount (dataset "${dataRoot}/chainweb-db-compacted");
-
-            # zfs uses copy on write and requires some free space to delete files when the disk is completely filled
-            #"reserved" = {
-            #  options = {
-            #    canmount = "off";
-            #    mountpoint = "none";
-            #    reservation = "5GiB";
-            #  };
-            #  type = "zfs_fs";
-            #};
-          };
-      };*/
-
       zroot = {
         type = "zpool";
         mountpoint = null;
