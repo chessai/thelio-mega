@@ -70,7 +70,7 @@ in
     };
 
     # 4TB M2
-    /*disk.y = {
+    disk.y = {
       type = "disk";
       device = "/dev/nvme1n1";
       content = {
@@ -88,9 +88,19 @@ in
           }
         ];
       };
-    };*/
+    };
 
     zpool = {
+      zstorage = {
+        type = "zpool";
+        mountpoint = "/data";
+        rootFsOptions = {
+          canmount = "off";
+        };
+        datasets =
+          {
+          };
+      };
       /*zstorage = {
         type = "zpool";
         mountpoint = null;
