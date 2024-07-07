@@ -1,5 +1,8 @@
 {
     "editor.fontSize": 20,
+    "editor.inlineSuggest.enabled": true,
+    "files.trimTrailingWhitespace": true,
+    "trailing-spaces.trimOnSave": true,
     "keyboard.dispatch": "keyCode",
     "alloglot.languages": [
         {

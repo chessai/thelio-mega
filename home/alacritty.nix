@@ -9,16 +9,19 @@ in
 
     settings = lib.mkOptionDefault {
       env.TERM = "alacritty";
-      draw_bold_text_with_bright_colors = true;
+
+      colors = {
+        draw_bold_text_with_bright_colors = true;
+
+        primary = {
+          background = colors.hex colors.dark;
+          foreground = colors.hex colors.light;
+        };
+      };
+
       font = {
         size = 18.0;
 
-        colors = {
-          primary = {
-            background = colors.hex colors.dark;
-            foreground = colors.hex colors.light;
-          };
-        };
 
         normal = {
           family = "Fira Code Nerd Font";
