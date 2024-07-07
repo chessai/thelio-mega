@@ -1,13 +1,30 @@
 { lib, ... }:
 
-let
-  disks = [ "/dev/nvme0n1" ];
-in
 {
   disko.devices = {
+    disk.y = {
+      type = "disk";
+      device = "/dev/nvme1n1";
+      content = {
+        type = "table";
+        format = "gpt";
+        partitions = [
+          {
+            name = "zfs";
+            start = "1MiB";
+            end = "100%";
+            content = {
+              type = "zfs";
+              pool = "zroot";
+            };
+          }
+        ];
+      };
+    };
+
     disk.x = {
       type = "disk";
-      device = builtins.elemAt disks 0;
+      device = "/dev/nvme0n1";
       content = {
         type = "table";
         format = "gpt";

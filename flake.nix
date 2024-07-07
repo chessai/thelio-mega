@@ -57,6 +57,7 @@
         modules = [
           nixos-hardware.nixosModules.system76
           disko.nixosModules.disko
+          ./disk-config.nix
           extract.nixosModules.${system}.extract
           home-manager.nixosModules.home-manager
           ./configuration.nix
