@@ -278,4 +278,9 @@ in
     enable = true;
     #package = pkgs.steam.override { withJava = true; };
   };
+
+  fileSystems."/mnt/data" =
+    { device = "/dev/disk/by-uuid/5a899c16-a86c-4671-b39c-f31eaea40d82";
+      fsType = "ext4";
+    };
 }
