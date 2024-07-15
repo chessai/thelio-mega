@@ -1,6 +1,7 @@
 {
     "editor.fontSize": 20,
     "editor.inlineSuggest.enabled": true,
+    "editor.lineNumbers": "relative",
     "files.trimTrailingWhitespace": true,
     "trailing-spaces.trimOnSave": true,
     "keyboard.dispatch": "keyCode",
