@@ -39,6 +39,7 @@
       file
       findutils
       ghcid
+      ghciwatch
       gist
       gnumake
       grim # wayland screenshot application that works
