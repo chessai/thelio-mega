@@ -7,51 +7,5 @@
     "files.trimTrailingWhitespace": true,
     "trailing-spaces.trimOnSave": true,
     "keyboard.dispatch": "keyCode",
-    "alloglot.languages": [
-        {
-        "languageId": "haskell",
-        "serverCommand": "static-ls",
-        "formatCommand": "fourmolu --mode stdout --stdin-input-file ${file}",
-        "apiSearchUrl": "https://hoogle.com/?hoogle=${query}",
-        "tags": {
-            "file": "tags",
-            "initTagsCommand": "tags",
-            "refreshTagsCommand": "tags --incremental",
-            "completionsProvider": true,
-            "definitionsProvider": false,
-            "importsProvider": {
-            "importLinePattern": "import ${module}",
-            "matchFromFilepath": "([A-Z][A-Za-z0-9_']*)(\\/([A-Z][A-Za-z0-9_']*))*\\.hs",
-            "renderModuleName": [
-                {
-                "tag": "replace",
-                "from": "\\.hs",
-                "to": ""
-                },
-                {
-                "tag": "replace",
-                "from": "\\/",
-                "to": "."
-                }
-            ]
-            }
-        },
-        "annotations": [
-            {
-            "file": "hlint-out.json",
-            "format": "json",
-            "mapping": {
-                "file": ["file"],
-                "startLine": ["startLine"],
-                "startColumn": ["startColumn"],
-                "endLine": ["endLine"],
-                "endColumn": ["endColumn"],
-                "message": ["hint"],
-                "severity": ["severity"],
-                "replacements": ["to"]
-            }
-            }
-        ]
-    }
-    ]
+    "extensions.autoUpdate": false
 }

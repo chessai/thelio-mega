@@ -22,12 +22,12 @@
       timonwong.shellcheck
       mhutchie.git-graph
     ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-      {
-        name = "alloglot";
-        publisher = "friedbrice";
-        version = "2.3.0";
-        sha256 = "sha256-Z0izTBG4sx1xXA0wrqCvOE3u0BOCnJB2svkHHHsAJS0=";
-      }
+      #{
+      #  name = "alloglot";
+      #  publisher = "friedbrice";
+      #  version = "2.3.0";
+      #  sha256 = "sha256-Z0izTBG4sx1xXA0wrqCvOE3u0BOCnJB2svkHHHsAJS0=";
+      #}
       {
         name = "regex";
         publisher = "chrmarti";
