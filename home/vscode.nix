@@ -15,6 +15,12 @@
       esbenp.prettier-vscode
       jnoortheen.nix-ide
       justusadam.language-haskell
+      oderwat.indent-rainbow
+      ms-vscode.cpptools
+      ms-vscode.hexeditor
+      waderyan.gitblame
+      timonwong.shellcheck
+      mhutchie.git-graph
     ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
       {
         name = "alloglot";
@@ -23,10 +29,10 @@
         sha256 = "sha256-Z0izTBG4sx1xXA0wrqCvOE3u0BOCnJB2svkHHHsAJS0=";
       }
       {
-        name = "haskell-ghcid";
-        publisher = "ndmitchell";
-        version = "0.3.1";
-        sha256 = "sha256-Ke7P8EJ3ghYG1qyf+w8c2xJlGrRGkJgJwvt0MSb9O+Y=";
+        name = "regex";
+        publisher = "chrmarti";
+        version = "0.4.0";
+        sha256 = "sha256-1yCTbDSIApgH7Fo9z8Kxlq6KdpuFQDl6LVHxEh/nNU8=";
       }
     ];
     userSettings = builtins.fromJSON (builtins.readFile ./vscode-settings.json);
