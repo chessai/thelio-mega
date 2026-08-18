@@ -1,3 +1,0 @@
-{
-  attinternet.psk = "<redacted>";
-}

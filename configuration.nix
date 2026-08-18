@@ -1,21 +1,5 @@
 { pkgs, lib, modulesPath, config, ... }:
 
-let
-  secrets = import ./secrets.nix;
-
-  #hsDocPackage = p: lib.getOutput "doc" p // {
-  #  pname = p.identifier.name;
-  #  haddockDir = p.haddockDir;
-  #};
-
-  #bruh = packageInputs: builtins.map hsDocPackage (flatLibDepends {
-  #  depends = packageInputs;
-  #  libs = [];
-  #  pkgconfig = [];
-  #  frameworks = [];
-  #  doExactConfig = false;
-  #});
-in
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
@@ -74,7 +58,7 @@ in
     enableIPv6 = false; # something is wrong with my network, ipv6 keeps causing issues
 
     # use NetworkManager
-    wireless.enable = false; # no wpa_supplicant
+    wireless.enable = true;
     networkmanager.enable = true; # use NetworkManager
 
     firewall = {
@@ -99,17 +83,109 @@ in
     };
   };
 
-  environment.systemPackages = [
-    pkgs.coreutils
-    pkgs.ntfs3g
-    pkgs.polymc
-    pkgs.util-linux
-    pkgs.nftables
-    pkgs.nvme-cli
-    pkgs.smartmontools
-    pkgs.efibootmgr
-    pkgs.pciutils
-    pkgs.iotop
+  environment.systemPackages = with pkgs; [
+    # Hardware introspection
+    dmidecode
+    hwloc # lstopo
+    lshw
+    pciutils # lspci, setpci
+    usbutils # lsusb
+
+    # Storage & filesystem
+    fio
+    gptfdisk # sgdisk
+    iotop
+    lvm2 # lvscan, lvs, vgs
+    ncdu
+    nvme-cli
+    parted
+    smartmontools
+    xfsprogs # mkfs.xfs, xfs_repair
+
+    # CPU / memory / system perf
+    bpftrace
+    htop
+    numactl
+    perf
+    sysstat
+
+    # Process tracing & debugging
+    bcc # pre-canned eBPF utilities (biolatency, tcpconnect, ...
+        # ...execsnoop, opensnoop, cachestat, ...)
+    binutils # strings, readelf, objdump, nm - inspect unknown blobs
+    file
+    gdb
+    lsof
+    ltrace
+    psmisc # pstree, fuser, killall - "what's holding this mount busy?"
+    strace
+
+    # Networking - observability
+    bind.dnsutils # dig, host, nslookup
+    ethtool
+    iperf3
+    iproute2 # ip, ss, tc
+    iputils # ping, arping, tracepath
+    mtr
+    netcat-gnu # nc
+    socat
+    tcpdump
+    traceroute
+
+    # Networking - control / filter
+    conntrack-tools
+    ipset
+    iptables
+    nftables # nft
+
+    # Text / data wrangling
+    jq
+    nano
+    pv
+    tree
+    yq-go # yq (Go port; handles YAML/JSON/XML)
+
+    # Multiplexers (TODO: look into better options)
+    tmux
+
+    # UEFI
+    efibooteditor
+    efibootmgr
+    efitools
+    efivar
+
+    # Server Management
+    ipmitool
+    ipmiutil
+
+    # General
+    coreutils # b2sum base32 base64 basename basenc cat chcon chgrp chmod chown
+              # chroot cksum comm coreutils cp csplit cut date dd df dir
+              # dircolors dirname du echo env expand expr factor false fmt fold
+              # groups head hostid id install join kill link ln logname ls
+              # md5sum mkdir mkfifo mknod mktemp mv nice nl nohup nproc numfmt
+              # od paste pathchk pinky pr printenv printf ptx pwd readlink
+              # realpath rm rmdir runcon seq sha1sum sha224sum sha256sum
+              # sha384sum sha512sum shred shuf sleep sort split stat stdbuf
+              # stty sum sync tac tail tee test timeout touch tr true truncate
+              # tsort tty uname unexpand uniq unlink uptime users vdir wc who
+              # whoami yes
+    util-linux # addpart agetty bits blkdiscard blkid blkpr blkzone blockdev cal
+               # cfdisk chcpu chfn chmem choom chrt chsh col colcrt colrm column
+               # copyfilerange coresched ctrlaltdel delpart dmesg eject enosys
+               # exch fadvise fallocate fdisk fincore findfs findmnt flock fsck
+               # fsck.cramfs fsck.minix fsfreeze fstrim getino getopt hardlink
+               # hd hexdump hwclock i386 ionice ipcmk ipcrm ipcs irqtop isosize
+               # kill last lastb lastlog2 ldattach linux32 linux64 logger login
+               # look losetup lsblk lsclocks lscpu lsfd lsipc lsirq lslocks
+               # lslogins lsmem lsns mcookie mesg mkfs mkfs.bfs mkfs.cramfs
+               # mkfs.minix mkswap more mount mountpoint namei nologin nsenter
+               # partx pipesz pivot_root prlimit readprofile rename renice
+               # resizepart rev rfkill rtcwake runuser script scriptlive
+               # scriptreplay setarch setpgid setpriv setsid setterm sfdisk
+               # sulogin swaplabel swapoff swapon switch_root taskset uclampset
+               # ul umount uname26 unshare utmpdump uuidd uuidgen uuidparse
+               # waitpid wall wdctl whereis wipefs write x86_64 zramctl
   ];
 
   users = {
@@ -173,17 +249,17 @@ in
     };
   };
 
-  virtualisation.virtualbox = {
-    host = {
-      enable = true;
-    };
-
-    guest = {
-      enable = true;
-      dragAndDrop = true;
-    };
-  };
-  users.extraGroups.vboxusers.members = [ "chessai" ];
+  #virtualisation.virtualbox = {
+  #  host = {
+  #    enable = true;
+  #  };
+  #
+  #  guest = {
+  #    enable = true;
+  #    dragAndDrop = true;
+  #  };
+  #};
+  #users.extraGroups.vboxusers.members = [ "chessai" ];
 
   nix = {
     nixPath = [ "nixpkgs=${pkgs.path}" ];
@@ -200,6 +276,9 @@ in
       # NixOS.org
       "https://cache.nixos.org"
 
+      # nix-community
+      "https://nix-community.cachix.org"
+
       # clever
       # "http://cache.earthtools.ca"
 
@@ -208,9 +287,6 @@ in
 
       # IOG-associated?
       #"https://cache.zw3rk.com"
-
-      # Kadena
-      #"https://nixcache.chainweb.com"
     ];
 
     trusted-public-keys = [
@@ -224,9 +300,10 @@ in
       # clever
       # "c2d.localnet-1:YTVKcy9ZO3tqPNxRqeYEYxSpUH5C8ykZ9ImUKuugf4c="
 
-      # Kadena
-      #"nixcache.chainweb.com:FVN503ABX9F8x8K0ptnc99XEz5SaA4Sks6kNcZn2pBY="
+      # nix-community
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
+
   };
 
   nix.extraOptions = lib.mkOrder 1 ''
@@ -285,12 +362,10 @@ in
       lmodern
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
-      noto-fonts-extra
+      noto-fonts-color-emoji
       powerline-fonts
       source-han-sans
-      source-han-sans-japanese
-      source-han-serif-japanese
+      source-han-serif
     ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
     /*
     error: nerdfonts has been separated into individual font packages under the namespace nerd-fonts.
@@ -312,11 +387,6 @@ in
     #  serif = [ "Noto Serif" "Source Han Serif" ];
     #  sansSerif = [ "Noto Sans" "Source Han Sans" ];
     #};
-  };
-
-  services.hoogle = {
-    port = config.services.hoogle.port.default;
-    packages = hp: [ pkgs.chainweb-node ];
   };
 
   services.blueman.enable = true;
@@ -343,16 +413,6 @@ in
   };
 
   system.stateVersion = "23.05";
-
-  services.chainweb-node = {
-    enable = false;
-    logLevel = "info";
-    headerStream = true;
-    bootstrapReachability = 0;
-    #subdir = "mainnet01-sigma-compacted";
-    configFile = ./chainweb-node-config.yaml;
-    #replay = true;
-  };
 
   ### section plex
   services.plex = {

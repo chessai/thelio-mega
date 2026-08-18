@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/release-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-26.05";
 
     disko = {
       url = "github:nix-community/disko/4677f6c53482a8b01ee93957e3bdd569d51261d6";
@@ -14,19 +14,12 @@
     nix-colors.url = "github:misterio77/nix-colors";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nvim-configs = {
       url = "github:chessai/nvim-configs";
-    };
-
-    chainwebNode.url = "github:kadena-io/chainweb-node";
-    chainwebModule.url = "github:kadena-io/chainweb-node-nixos-module";
-
-    jj = {
-      url = "github:martinvonz/jj";
     };
 
     polymc.url = "github:PolyMC/PolyMC";
@@ -47,9 +40,6 @@
       nixpkgs,
       nixos-hardware,
       nvim-configs,
-      chainwebModule,
-      chainwebNode,
-      jj,
       polymc,
       self,
       ...
@@ -74,40 +64,35 @@
           ({ ... }: {
             home-manager.users.chessai.home.packages = [
               nvim-configs.packages.${system}.neovim
-              #jj.packages.${system}.jujutsu
             ];
           })
           {
             nixpkgs.overlays = [
-              (self: super: {
-                chainweb-node = chainwebNode.packages.${system}.default;
-              })
               polymc.overlay
             ];
           }
-          chainwebModule.nixosModules.chainweb-node
-          ({ pkgs, ... }: {
-            nixpkgs.overlays = [ fenix.overlays.default ];
-            environment.systemPackages =
-              let
-                base-fenix = pkgs.fenix.complete.withComponents [
-                  "cargo"
-                  "clippy"
-                  "rust-src"
-                  "rustc"
-                  "rustfmt"
-                ];
-                full-fenix = fenix.packages.${system}.combine [
-                  base-fenix
-                  fenix.packages.${system}.targets.wasm32-unknown-unknown.latest.rust-std
-                ];
-              in
-              [
-                full-fenix
-                pkgs.rust-analyzer-nightly
-                pkgs.trunk
-              ];
-          })
+          #({ pkgs, ... }: {
+          #  nixpkgs.overlays = [ fenix.overlays.default ];
+          #  environment.systemPackages =
+          #    let
+          #      base-fenix = pkgs.fenix.complete.withComponents [
+          #        "cargo"
+          #        "clippy"
+          #        "rust-src"
+          #        "rustc"
+          #        "rustfmt"
+          #      ];
+          #      full-fenix = fenix.packages.${system}.combine [
+          #        base-fenix
+          #        fenix.packages.${system}.targets.wasm32-unknown-unknown.latest.rust-std
+          #      ];
+          #    in
+          #    [
+          #      full-fenix
+          #      pkgs.rust-analyzer-nightly
+          #      pkgs.trunk
+          #    ];
+          #})
         ];
       };
 

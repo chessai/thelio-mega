@@ -21,6 +21,7 @@
       ./alacritty.nix
       ./bash.nix
       ./chromium.nix
+      ./claude.nix
       ./direnv.nix
       ./firefox.nix
       ./git.nix
@@ -40,7 +41,7 @@
       cachix
       claude-code
       cockatrice
-      discord
+      #discord
       edopro
       fd
       file
