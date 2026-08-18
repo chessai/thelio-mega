@@ -1,15 +1,20 @@
+{ lib, ... }:
+
 {
   programs.ssh = {
     enable = true;
-    extraConfig = ''
-      Host athena
-        User chessai
-        Port 2202
-        HostName newartisans.hopto.org
 
-      Host analytics
-        User root
-        Hostname ec2-52-54-218-125.compute-1.amazonaws.com
+    matchBlocks = {
+      "github.com" = lib.hm.dag.entryBefore ["*"] {
+         serverAliveInterval = 60;
+         serverAliveCountMax = 10;
+
+         # needed for git lfs
+         # git config core.sshCommand "ssh -o 'ServerAliveInterval=60' -o 'ServerAliveCountMax=10' -o 'ControlMaster=auto' -o 'ControlPath=~/.ssh/control-%C' -o 'ControlPersist=600'"
+      };
+    };
+
+    extraConfig = ''
     '';
   };
 }

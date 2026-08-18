@@ -23,10 +23,10 @@
       grep = "${pkgs.ripgrep}/bin/rg";
       rg = "${pkgs.ripgrep}/bin/rg";
 
-      git = "${pkgs.gitAndTools.gitFull}/bin/git";
-      gs = "${pkgs.gitAndTools.gitFull}/bin/git status";
-      gc = "${pkgs.gitAndTools.gitFull}/bin/git clone git@github.com:$1/$2";
-      git-initial-commit = "${pkgs.gitAndTools.gitFull}/bin/git commit -m \"Creō ā nihilō\"";
+      git = "${pkgs.git}/bin/git";
+      gs = "${pkgs.git}/bin/git status";
+      gc = "${pkgs.git}/bin/git clone git@github.com:$1/$2";
+      git-initial-commit = "${pkgs.git}/bin/git commit -m \"Creō ā nihilō\"";
 
       gist = "gist --private";
       gist-archive = "for repo in $(gist -l | awk '{ print $1 }'); do git clone $repo 2> /dev/null; done";

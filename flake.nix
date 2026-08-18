@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-25.05";
 
     disko = {
       url = "github:nix-community/disko/4677f6c53482a8b01ee93957e3bdd569d51261d6";
@@ -14,7 +14,7 @@
     nix-colors.url = "github:misterio77/nix-colors";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -22,11 +22,18 @@
       url = "github:chessai/nvim-configs";
     };
 
-    chainwebNode.url = "github:kadena-io/chainweb-node/bbaa5f5ebd57947d7e20a131cf242be4cf66b2a1";
+    chainwebNode.url = "github:kadena-io/chainweb-node";
     chainwebModule.url = "github:kadena-io/chainweb-node-nixos-module";
 
     jj = {
       url = "github:martinvonz/jj";
+    };
+
+    polymc.url = "github:PolyMC/PolyMC";
+
+    fenix = {
+      url = "github:nix-community/fenix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -34,6 +41,7 @@
     {
       disko,
       extract,
+      fenix,
       home-manager,
       nix-colors,
       nixpkgs,
@@ -42,6 +50,7 @@
       chainwebModule,
       chainwebNode,
       jj,
+      polymc,
       self,
       ...
     }:
@@ -49,6 +58,8 @@
     system = "x86_64-linux";
   in
   {
+    packages.${system}.default = fenix.packages.${system}.minimal.toolchain;
+
     diskoConfigurations.thelio-mega = import ./disk-config.nix;
 
     nixosConfigurations = {
@@ -63,7 +74,7 @@
           ({ ... }: {
             home-manager.users.chessai.home.packages = [
               nvim-configs.packages.${system}.neovim
-              jj.packages.${system}.jujutsu
+              #jj.packages.${system}.jujutsu
             ];
           })
           {
@@ -71,9 +82,32 @@
               (self: super: {
                 chainweb-node = chainwebNode.packages.${system}.default;
               })
+              polymc.overlay
             ];
           }
           chainwebModule.nixosModules.chainweb-node
+          ({ pkgs, ... }: {
+            nixpkgs.overlays = [ fenix.overlays.default ];
+            environment.systemPackages =
+              let
+                base-fenix = pkgs.fenix.complete.withComponents [
+                  "cargo"
+                  "clippy"
+                  "rust-src"
+                  "rustc"
+                  "rustfmt"
+                ];
+                full-fenix = fenix.packages.${system}.combine [
+                  base-fenix
+                  fenix.packages.${system}.targets.wasm32-unknown-unknown.latest.rust-std
+                ];
+              in
+              [
+                full-fenix
+                pkgs.rust-analyzer-nightly
+                pkgs.trunk
+              ];
+          })
         ];
       };
 

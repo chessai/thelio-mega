@@ -25,6 +25,8 @@ in
   ];
 
   boot = {
+    tmp.useTmpfs = true;
+
     loader = {
       grub = {
         enable = true;
@@ -60,29 +62,54 @@ in
     tmp.cleanOnBoot = true;
   };
 
+  services.smartd.enable = true;
+  hardware.rasdaemon.enable = true;
+  services.zfs.autoScrub.enable = true;
+
   services.openssh = {
     enable = true;
   };
 
   networking = {
-    wireless = {
-      enable = true;
-      networks = {
-        attinternet.psk = secrets.attinternet.psk;
-      };
-    };
+    enableIPv6 = false; # something is wrong with my network, ipv6 keeps causing issues
+
+    # use NetworkManager
+    wireless.enable = false; # no wpa_supplicant
+    networkmanager.enable = true; # use NetworkManager
 
     firewall = {
       enable = true;
+      extraCommands = ''
+        # Create OUTPUT chain if it doesn't exist, then add accept rule for all
+        # outgoing traffic
+        #${pkgs.nftables}/bin/nft add chain ip filter OUTPUT '{ type filter hook output priority 0; policy accept; }' 2>/dev/null || true
+        #${pkgs.nftables}/bin/nft add chain ip6 filter OUTPUT '{ type filter hook output priority 0; policy accept; }' 2>/dev/null || true
+      '';
     };
+
+    nameservers = ["192.168.0.1" "45.90.28.195" "8.8.8.8" "8.8.4.4"];
 
     hostId = "8425e349";
     hostName = "thelio_mega";
+
+    hosts = {
+      # for docker, letting it pull over ipv4. ipv6 isn't working for some
+      # reason
+      "23.22.106.255" = ["registry-1.docker.io"];
+    };
   };
 
   environment.systemPackages = [
     pkgs.coreutils
+    pkgs.ntfs3g
+    pkgs.polymc
     pkgs.util-linux
+    pkgs.nftables
+    pkgs.nvme-cli
+    pkgs.smartmontools
+    pkgs.efibootmgr
+    pkgs.pciutils
+    pkgs.iotop
   ];
 
   users = {
@@ -116,6 +143,17 @@ in
       hashedPassword = "$6$wA4C5Rij.J4xZHMn$cJjyAXP9KYpmAgRfTKooL5lKYtPvQ0DwErev4loNEIwka/pNjpJiPjU0XYI9ePUwWHzw.POPguYs56Ptm26Do0";
       openssh.authorizedKeys.keys = import ./chessai-ssh-keys.nix;
     };
+
+    #users.zk = {
+    #  description = "zk proof user";
+    #  isNormalUser = true;
+    #  uid = 2555;
+    #  createHome = true;
+    #  home = "/home/zk";
+    #  extraGroups = [];
+    #  #hashedPassword = "";
+    #  #openssh.authorizedKeys.keys = [];
+    #};
   };
 
   services.zfs = {
@@ -130,7 +168,22 @@ in
     enable = true;
     storageDriver = "zfs";
     autoPrune.enable = true;
+    daemon.settings = {
+      ipv6 = false;
+    };
   };
+
+  virtualisation.virtualbox = {
+    host = {
+      enable = true;
+    };
+
+    guest = {
+      enable = true;
+      dragAndDrop = true;
+    };
+  };
+  users.extraGroups.vboxusers.members = [ "chessai" ];
 
   nix = {
     nixPath = [ "nixpkgs=${pkgs.path}" ];
@@ -145,7 +198,7 @@ in
 
     substituters = [
       # NixOS.org
-      "http://cache.nixos.org"
+      "https://cache.nixos.org"
 
       # clever
       # "http://cache.earthtools.ca"
@@ -157,7 +210,7 @@ in
       #"https://cache.zw3rk.com"
 
       # Kadena
-      "https://nixcache.chainweb.com"
+      #"https://nixcache.chainweb.com"
     ];
 
     trusted-public-keys = [
@@ -172,7 +225,7 @@ in
       # "c2d.localnet-1:YTVKcy9ZO3tqPNxRqeYEYxSpUH5C8ykZ9ImUKuugf4c="
 
       # Kadena
-      "nixcache.chainweb.com:FVN503ABX9F8x8K0ptnc99XEz5SaA4Sks6kNcZn2pBY="
+      #"nixcache.chainweb.com:FVN503ABX9F8x8K0ptnc99XEz5SaA4Sks6kNcZn2pBY="
     ];
   };
 
@@ -180,7 +233,7 @@ in
     keep-outputs = true
     keep-derivations = true
     auto-optimise-store = false
-    experimental-features = nix-command flakes ca-derivations
+    experimental-features = nix-command flakes ca-derivations recursive-nix
   '';
 
   nixpkgs = {
@@ -209,12 +262,17 @@ in
   security.polkit.enable = true;
 
   # screen sharing section
-  services.pipewire.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
   xdg.portal = {
     enable = true;
     wlr.enable = true;
-    extraPortals = with pkgs;
-      [ xdg-desktop-portal-wlr xdg-desktop-portal-gtk ];
+    extraPortals = with pkgs; [ xdg-desktop-portal-wlr xdg-desktop-portal-gtk ];
   };
   # end screen sharing section
 
@@ -225,16 +283,31 @@ in
       freefont_ttf
       liberation_ttf_v2
       lmodern
-      nerdfonts
       noto-fonts
-      noto-fonts-cjk
+      noto-fonts-cjk-sans
       noto-fonts-emoji
       noto-fonts-extra
       powerline-fonts
       source-han-sans
       source-han-sans-japanese
       source-han-serif-japanese
-    ];
+    ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
+    /*
+    error: nerdfonts has been separated into individual font packages under the namespace nerd-fonts.
+       For example change:
+         fonts.packages = [
+           ...
+           (pkgs.nerdfonts.override { fonts = [ "0xproto" "DroidSansMono" ]; })
+         ]
+       to
+         fonts.packages = [
+           ...
+           pkgs.nerd-fonts._0xproto
+           pkgs.nerd-fonts.droid-sans-mono
+         ]
+       or for all fonts
+         fonts.packages = [ ... ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts)
+    */
     #fontconfig.defaultFonts = {
     #  serif = [ "Noto Serif" "Source Han Serif" ];
     #  sansSerif = [ "Noto Sans" "Source Han Sans" ];
@@ -246,23 +319,75 @@ in
     packages = hp: [ pkgs.chainweb-node ];
   };
 
+  services.blueman.enable = true;
   hardware = {
-    bluetooth.enable = true;
+    bluetooth = {
+      enable = true;
+      disabledPlugins = [];
+      settings = {
+        General = {
+          ControllerMode = "bredr";
+          Enable = "Source,Sink,Media,Socket";
+        };
+      };
+    };
 
-    pulseaudio.enable = true;
+    #pulseaudio = {
+    #  enable = true;
+    #  support32Bit = true;
+    #  package = pkgs.pulseaudioFull;
+    #  daemon.config = {
+    #    # default-sample-rate = 48 * 1000;
+    #  };
+    #};
   };
 
   system.stateVersion = "23.05";
 
-  /*services.chainweb-node = {
-    enable = true;
+  services.chainweb-node = {
+    enable = false;
     logLevel = "info";
     headerStream = true;
     bootstrapReachability = 0;
-    subdir = "mainnet01-sigma-compacted";
-    #configFile = ./chainweb-node-config.yaml;
+    #subdir = "mainnet01-sigma-compacted";
+    configFile = ./chainweb-node-config.yaml;
     #replay = true;
-  };*/
+  };
+
+  ### section plex
+  services.plex = {
+    enable = true;
+    openFirewall = true;
+
+    user = "plex";
+    group = "plex";
+
+    dataDir = "/var/lib/plex";
+  };
+
+  users.users.plex.extraGroups = [ "users" "video" "render" ];
+
+  #systemd.tmpfiles.rules = [
+  #  "Z /mnt/data/media 0755 plex video - -"
+  #];
+
+  systemd.services.fix-media-permissions = {
+    description = "Fix plex media directory permissions";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "local-fs.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.coreutils}/bin/chgrp -R video /mnt/data/media && ${pkgs.coreutils}/bin/chmod -R g+w /mnt/data/media'";
+    };
+  };
+
+  #hardware.opengl = {
+  #  enable = true;
+  #  driSupport = true;
+  #  driSupport32Bit = true;
+  #};
+
+  ### end section plex
 
   security.pam.loginLimits = [
     {
@@ -283,4 +408,7 @@ in
     { device = "/dev/disk/by-uuid/5a899c16-a86c-4671-b39c-f31eaea40d82";
       fsType = "ext4";
     };
+
+  # no metadata write on reads
+  fileSystems."/nix/store".options = [ "noatime" ];
 }

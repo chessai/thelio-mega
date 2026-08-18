@@ -51,6 +51,7 @@ in
         #"${modifier}+p" = "mode power";
         "${modifier}+n" = "exec makoctl dismiss";
         "${modifier}+Shift+n" = "exec makoctl dismiss -a";
+        "${modifier}+w" = "exec networkmanager_dmenu";
 
         "${modifier}+1" = "workspace number 1";
         "${modifier}+2" = "workspace number 2";
@@ -115,6 +116,14 @@ in
     XDG_SESSION_TYPE=wayland
   '';
 
+  xdg.configFile."networkmanager-dmenu/config.ini".text = ''
+    [dmenu]
+    dmenu_command = rofi -dmenu
+    rofi_highlight = True
+    compact = True
+    pinentry = pinentry-gnome3
+  '';
+
   programs.waybar = {
     enable = true;
     settings = [{
@@ -123,7 +132,7 @@ in
       height = 40;
       modules-left = [ "sway/workspaces" "sway/mode" ];
       modules-center = [ "sway/window" ];
-      modules-right = [ "clock" ];
+      modules-right = [ "network" "clock" ];
       "sway/window" = {
         format = "{}";
         max-length = 50;
@@ -135,6 +144,13 @@ in
         format = "{:%H:%M}";
         tooltip-format = "{:%Y-%m-%d | %H:%M}";
         format-alt = "{:%Y-%m-%d}";
+      };
+      network = {
+        format-wifi = "{essid} {signalStrength}%";
+        format-ethernet = "{ifname}";
+        format-disconnected = "disconnected";
+        on-click = "networkmanager_dmenu";
+        tooltip-format = "{ifname} via {gwaddr}";
       };
     }];
 
@@ -204,14 +220,14 @@ in
     text-color = colors.hex colors.light;
   };
 
-  services.mako = {
+  services.mako.settings = {
     enable = true;
     anchor = "top-right";
-    backgroundColor = colors.hex colors.dark;
-    textColor = colors.hex colors.light;
-    borderColor = colors.hex colors.primary;
-    borderRadius = 5;
-    borderSize = 2;
+    background-color = colors.hex colors.dark;
+    text-color = colors.hex colors.light;
+    border-color = colors.hex colors.primary;
+    border-radius = 5;
+    border-size = 2;
     font = "SourceCodePro 18";
   };
 

@@ -3,6 +3,7 @@
 let
   dataset = mountpoint: {
     options = {
+      atime = "off"; # don't generate metadata entries for every single read
       canmount = "on";
       compression = "on";
       dnodesize = "auto";
@@ -113,7 +114,7 @@ in
             # coredumps are rather large, and can expire quickly,
             # so that conflicts with zfs snapshots saving every byte,
             # so it's on its own dataset with no snapshots
-            "data/coredumps" = dataset "/var/lib/systemd/coredump";
+            "data/coredumps" = dontSnapshot (dataset "/var/lib/systemd/coredump");
 
             # zfs uses copy on write and requires some free space to delete files when the disk is completely filled
             "reserved" = {
