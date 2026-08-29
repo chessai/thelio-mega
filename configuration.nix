@@ -6,6 +6,7 @@
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk-config.nix
     ./home
+    ./nvidia.nix
   ];
 
   boot = {
@@ -108,6 +109,9 @@
     numactl
     perf
     sysstat
+
+    # GPU
+    nvtopPackages.full
 
     # Process tracing & debugging
     bcc # pre-canned eBPF utilities (biolatency, tcpconnect, ...
