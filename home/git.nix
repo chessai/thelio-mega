@@ -53,14 +53,16 @@ in
   programs.git = {
     enable = true;
 
-    userName = "chessai";
-    userEmail = "chessai1996@gmail.com";
-
     inherit ignores;
 
     lfs.enable = true;
 
-    extraConfig = {
+    settings = {
+      user = {
+        name = "chessai";
+        email = "chessai1996@gmail.com";
+      };
+
       pull.rebase = true;
 
       # no more -u

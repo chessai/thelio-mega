@@ -74,8 +74,8 @@ in
         {
           name = "claude-code";
           publisher = "anthropic";
-          version = "2.1.234";
-          sha256 = "sha256-8SakE2rooV1s7+vDSNFKGErsnGEpxFMuds2Zit1b9cw=";
+          version = "2.1.237";
+          sha256 = "sha256-OkUNFovJqm/F65O9p47lPgne0mjXqMKVPpjSbP2vsHo=";
         }
       ];
     };

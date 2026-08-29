@@ -32,41 +32,43 @@ in
       type = "disk";
       device = "/dev/nvme0n1";
       content = {
-        type = "table";
-        format = "gpt";
-        partitions = [
-          {
-            name = "ESP";
-            start = "1MiB";
-            end = "512MiB";
-            bootable = true;
-            fs-type = "fat32";
+        type = "gpt";
+        partitions = {
+          # `label` is pinned to the on-disk GPT partition names (which predate
+          # the gpt-type migration); disko would otherwise derive
+          # `gpt-x-<name>` and the by-partlabel device paths would not resolve.
+          ESP = {
+            priority = 1;
+            label = "ESP";
+            type = "EF00";
+            start = "1M";
+            end = "512M";
             content = {
               type = "filesystem";
               format = "vfat";
               mountpoint = "/boot";
             };
-          }
+          };
 
-          {
-            name = "zfs";
-            start = "512MiB";
-            end = "-32GiB";
+          zfs = {
+            priority = 2;
+            label = "zfs";
+            end = "-32G";
             content = {
               type = "zfs";
               pool = "zroot";
             };
-          }
+          };
 
-          {
-            name = "swap";
-            start = "-32GiB";
-            end = "100%";
+          swap = {
+            priority = 3;
+            label = "swap";
+            size = "100%";
             content = {
               type = "swap";
             };
-          }
-        ];
+          };
+        };
       };
     };
 

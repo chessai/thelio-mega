@@ -10,6 +10,9 @@ let
     autoUpdatesChannel = "stable";
     defaultMode = "auto";
 
+    # May God have mercy on my soul.
+    outputStyle = "Concise";
+
     permissions = {
       deny = builtins.map claudeBashCommand [
         "git add"

@@ -249,17 +249,12 @@
     };
   };
 
-  #virtualisation.virtualbox = {
-  #  host = {
-  #    enable = true;
-  #  };
-  #
-  #  guest = {
-  #    enable = true;
-  #    dragAndDrop = true;
-  #  };
-  #};
-  #users.extraGroups.vboxusers.members = [ "chessai" ];
+  virtualisation.virtualbox = {
+    host = {
+      enable = true;
+    };
+  };
+  users.extraGroups.vboxusers.members = [ "chessai" ];
 
   nix = {
     nixPath = [ "nixpkgs=${pkgs.path}" ];
@@ -463,6 +458,11 @@
     enable = true;
     #package = pkgs.steam.override { withJava = true; };
   };
+
+  # install a shim at the FHS loader path that redirects to the real glibc
+  # loader via NIX_LD. if a missing .so is encountered, you can add it to
+  # `programs.nix-ld.libraries`.
+  programs.nix-ld.enable = true;
 
   fileSystems."/mnt/data" =
     { device = "/dev/disk/by-uuid/5a899c16-a86c-4671-b39c-f31eaea40d82";

@@ -41,7 +41,7 @@
       cachix
       claude-code
       cockatrice
-      #discord
+      discord
       edopro
       fd
       file
