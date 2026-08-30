@@ -33,11 +33,6 @@
       url = "github:chessai/nvim-configs";
     };
 
-    polymc = {
-      url = "github:PolyMC/PolyMC";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     fenix = {
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -59,7 +54,6 @@
       nixpkgs,
       nixos-hardware,
       nvim-configs,
-      polymc,
       self,
       treefmt-nix,
       ...
@@ -109,7 +103,7 @@
               ];
             })
             {
-              nixpkgs.overlays = import ./overlays { inherit polymc maestro; };
+              nixpkgs.overlays = import ./overlays { inherit maestro; };
             }
           ];
         };
