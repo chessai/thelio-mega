@@ -7,11 +7,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixos-hardware.url = "github:NixOS/nixos-hardware";
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    extract.url = "github:chessai/extract";
-
-    nix-colors.url = "github:misterio77/nix-colors";
+    extract = {
+      url = "github:chessai/extract";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
@@ -23,11 +27,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # No inputs.nixpkgs.follows: nvim-configs references nodePackages.*, which
+    # was removed from nixpkgs, so it only evaluates against its own pin.
     nvim-configs = {
       url = "github:chessai/nvim-configs";
     };
 
-    polymc.url = "github:PolyMC/PolyMC";
+    polymc = {
+      url = "github:PolyMC/PolyMC";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     fenix = {
       url = "github:nix-community/fenix";
@@ -42,7 +51,6 @@
       fenix,
       home-manager,
       maestro,
-      nix-colors,
       nixpkgs,
       nixos-hardware,
       nvim-configs,
@@ -73,10 +81,7 @@
             ];
           })
           {
-            nixpkgs.overlays = [
-              polymc.overlay
-              (final: prev: { maestro = maestro.packages.${prev.system}.default; })
-            ];
+            nixpkgs.overlays = import ./overlays { inherit polymc maestro; };
           }
         ];
       };
