@@ -72,7 +72,13 @@
       '';
     };
 
-    nameservers = ["192.168.0.1" "45.90.28.195" "8.8.8.8" "8.8.4.4"];
+    # 192.168.0.1 (the router) returns malformed responses to EDNS0 queries,
+    # which makes glibc getaddrinfo fail outright instead of trying the next
+    # server. Skip it and turn EDNS0 off so a DHCP-supplied forwarder cannot
+    # reintroduce the same failure.
+    nameservers = ["45.90.28.195" "8.8.8.8" "8.8.4.4"];
+    resolvconf.dnsExtensionMechanism = false;
+    networkmanager.dns = "none";
 
     hostId = "8425e349";
     hostName = "thelio_mega";
