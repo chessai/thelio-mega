@@ -1,7 +1,7 @@
 { lib, ... }:
 
 let
-  colors = import ./colors.nix { inherit lib; };
+  colors = import ../colors.nix { inherit lib; };
 in
 {
   programs.alacritty = {
@@ -21,7 +21,6 @@ in
 
       font = {
         size = 18.0;
-
 
         normal = {
           family = "Fira Code Nerd Font";

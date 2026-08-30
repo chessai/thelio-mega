@@ -8,7 +8,7 @@
     enableDefaultConfig = false;
 
     settings = {
-      "github.com" = lib.hm.dag.entryBefore ["*"] {
+      "github.com" = lib.hm.dag.entryBefore [ "*" ] {
         ServerAliveInterval = 60;
         ServerAliveCountMax = 10;
 

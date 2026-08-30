@@ -7,7 +7,14 @@
     historySize = 10 * 1000;
     historyFileSize = 1000 * 1000;
     historyControl = [ "ignoredups" ];
-    historyIgnore = [ "ls" "cd" "exit" "vi" "vim" "nvim" ];
+    historyIgnore = [
+      "ls"
+      "cd"
+      "exit"
+      "vi"
+      "vim"
+      "nvim"
+    ];
 
     shellAliases = {
       ".0" = "cd .";

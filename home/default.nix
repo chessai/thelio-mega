@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   home-manager = {
@@ -18,113 +18,25 @@
     manual.manpages.enable = false;
 
     imports = [
-      ./alacritty.nix
-      ./bash.nix
-      ./chromium.nix
-      ./claude.nix
-      ./direnv.nix
-      ./firefox.nix
-      ./git.nix
-      ./jq.nix
-      ./ssh.nix
-      ./tmux.nix
-      ./vscode.nix
-      ./wayland.nix
-    ];
+      ./packages.nix
 
-    home.packages = with pkgs; [
-      (aspellWithDicts (d: [ d.en ]))
-      awscli2
-      bind
-      bluetuith
-      bubblewrap
-      cabal-install
-      cachix
-      claude-code
-      cockatrice
-      discord
-      edopro
-      fd
-      file
-      findutils
-      ghcid
-      ghciwatch
-      gist
-      gnumake
-      grim # wayland screenshot application that works
-      htop
-      imv # wayland image viewer that works
-      kooha
-      #libnotify
-      #perf #linuxKernel.packages.linux_5_15.perf
-      maestro
-      qbittorrent
-      mosh
-      networkmanager_dmenu
-      networkmanagerapplet
-      nix-prefetch-git
-      nmap
-      parallel
-      parted
-      pavucontrol
-      pdfpc # pdf presentation viewer run with -s -S
-      pinentry-gnome3
-      ripgrep
-      rofi
-      signal-desktop
-      silver-searcher
-      slack
-      slurp
-      spotify
-      swaylock-effects
-      tcpdump
-      telegram-desktop
-      tldr
-      tmux
-      tree
-      w3m
-      waybar
-      wget
-      which
-      wl-clipboard
-      xorriso
-      xwayland
-      xxd
-      yt-dlp
+      ./browsers/chromium.nix
+      ./browsers/firefox.nix
+
+      ./desktop
+
+      ./dev/claude.nix
+      ./dev/direnv.nix
+      ./dev/git.nix
+      ./dev/ssh.nix
+      ./dev/vscode.nix
+
+      ./shell/alacritty.nix
+      ./shell/bash.nix
+      ./shell/jq.nix
+      ./shell/tmux.nix
     ];
 
     home.stateVersion = "23.05";
   };
-
-  /*
-  home-manager.users.zk = {
-    nixpkgs.config = {
-      allowUnfree = true;
-      allowBroken = false;
-    };
-
-    # Fails to build often and idc about it
-    manual.manpages.enable = false;
-
-    imports = [
-      ./jq.nix
-    ];
-
-    home.packages = with pkgs; [
-      fd
-      file
-      findutils
-      gnumake
-      htop
-      linuxKernel.packages.linux_5_15.perf
-      parallel
-      silver-searcher
-      tldr
-      which
-      xxd
-    ];
-
-    home.stateVersion = "23.05";
-  };
-  */
 }
