@@ -42,6 +42,11 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -56,42 +61,65 @@
       nvim-configs,
       polymc,
       self,
+      treefmt-nix,
       ...
     }:
-  let
-    system = "x86_64-linux";
-  in
-  {
-    packages.${system}.default = fenix.packages.${system}.minimal.toolchain;
+    let
+      system = "x86_64-linux";
 
-    diskoConfigurations.thelio-mega = import ./disk-config.nix;
+      pkgs = nixpkgs.legacyPackages.${system};
 
-    nixosConfigurations = {
-      thelio-mega = nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [
-          nixos-hardware.nixosModules.system76
-          disko.nixosModules.disko
-          extract.nixosModules.${system}.extract
-          home-manager.nixosModules.home-manager
-          ./system
-          ({ ... }: {
-            home-manager.users.chessai.home.packages = [
-              nvim-configs.packages.${system}.neovim
-            ];
-          })
-          {
-            nixpkgs.overlays = import ./overlays { inherit polymc maestro; };
-          }
-        ];
+      # One formatter for the whole repo: nixfmt (RFC-style) over every *.nix
+      # file. Exposed twice - as `formatter` (what `nix fmt` runs) and as a
+      # check (what `nix flake check` verifies).
+      treefmtEval = treefmt-nix.lib.evalModule pkgs {
+        projectRootFile = "flake.nix";
+        # pkgs.nixfmt *is* nixfmt-rfc-style as of nixpkgs 25.05; the
+        # nixfmt-rfc-style attribute is now an alias that warns on eval.
+        programs.nixfmt.enable = true;
+      };
+    in
+    {
+      formatter.${system} = treefmtEval.config.build.wrapper;
+
+      # `nix flake check` should mean "both configurations still build, and the
+      # tree is formatted" - anything weaker proves nothing about this repo.
+      checks.${system} = {
+        toplevel = self.nixosConfigurations.thelio-mega.config.system.build.toplevel;
+        iso = self.nixosConfigurations.iso.config.system.build.toplevel;
+        formatting = treefmtEval.config.build.check self;
       };
 
-      iso = nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [
-          ./iso.nix
-        ];
+      packages.${system}.default = fenix.packages.${system}.minimal.toolchain;
+
+      diskoConfigurations.thelio-mega = import ./disk-config.nix;
+
+      nixosConfigurations = {
+        thelio-mega = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            nixos-hardware.nixosModules.system76
+            disko.nixosModules.disko
+            extract.nixosModules.${system}.extract
+            home-manager.nixosModules.home-manager
+            ./system
+            ({ ... }: {
+              home-manager.users.chessai.home.packages = [
+                nvim-configs.packages.${system}.neovim
+              ];
+            })
+            {
+              nixpkgs.overlays = import ./overlays { inherit polymc maestro; };
+            }
+          ];
+        };
+
+        iso = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            ./iso.nix
+          ];
+        };
       };
     };
-  };
 }
