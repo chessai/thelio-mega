@@ -1,10 +1,13 @@
 {
-  colors,
+  config,
   swayfont,
   modifier,
   ...
 }:
 
+let
+  colors = config.colorscheme.colors;
+in
 {
   wayland.windowManager.sway = {
     enable = true;

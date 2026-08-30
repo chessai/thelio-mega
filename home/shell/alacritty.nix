@@ -1,7 +1,7 @@
-{ lib, ... }:
+{ config, lib, ... }:
 
 let
-  colors = import ../colors.nix { inherit lib; };
+  colors = config.colorscheme.colors;
 in
 {
   programs.alacritty = {

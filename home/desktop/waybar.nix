@@ -1,5 +1,8 @@
-{ colors, ... }:
+{ config, ... }:
 
+let
+  colors = config.colorscheme.colors;
+in
 {
   programs.waybar = {
     enable = true;

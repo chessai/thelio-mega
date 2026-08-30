@@ -18,6 +18,7 @@
     manual.manpages.enable = false;
 
     imports = [
+      ./colorscheme.nix
       ./packages.nix
 
       ./browsers/chromium.nix
