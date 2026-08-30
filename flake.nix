@@ -27,10 +27,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # No inputs.nixpkgs.follows: nvim-configs references nodePackages.*, which
-    # was removed from nixpkgs, so it only evaluates against its own pin.
     nvim-configs = {
       url = "github:chessai/nvim-configs";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     fenix = {

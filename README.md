@@ -148,6 +148,9 @@ overlays/
 Neovim is not in `home/packages.nix`. It is injected by an inline module in
 `flake.nix`, from the `nvim-configs` input.
 
+Neovim is 0.12.4. The plugin set in `nvim-configs`' `lazy-lock.json` is managed by
+lazy.nvim outside Nix, so it is updated with `:Lazy update`, not by a rebuild.
+
 ## Machine-specific magic values
 
 Things that are non-obvious and are dangerous to change without knowing why
@@ -190,16 +193,6 @@ identical across the reorganisation. Removing it rebuilds the user profile for
 no reason.
 
 ## Known issues / follow-ups
-
-- **`nvim-configs` cannot take `inputs.nixpkgs.follows = "nixpkgs"`.** Its
-  `flake.nix` references `nodePackages.vscode-langservers-extracted`,
-  `nodePackages.bash-language-server` and `nodePackages.prettier`, and the
-  `nodePackages` attrset has since been removed from nixpkgs, so following the
-  current nixpkgs makes it fail to evaluate. Until that is fixed upstream in
-  `github:chessai/nvim-configs`, the input keeps its own pinned nixpkgs (an
-  `nixpkgs-unstable` from March 2024, a 144 MiB source checkout) and the neovim
-  it produces drags in a roughly 1.4 GiB closure of its own. Every other input
-  follows the root nixpkgs.
 
 - Two evaluation warnings are expected and harmless: `'system' has been renamed
   to/replaced by 'stdenv.hostPlatform.system'` from an input, and a
