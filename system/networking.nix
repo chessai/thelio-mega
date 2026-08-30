@@ -34,8 +34,9 @@
     resolvconf.dnsExtensionMechanism = false;
     networkmanager.dns = "none";
 
+    # Can't change hostId, ZFS uses it
     hostId = "8425e349";
-    hostName = "thelio_mega";
+    hostName = "thelio-mega";
 
     hosts = {
       # for docker, letting it pull over ipv4. ipv6 isn't working for some
