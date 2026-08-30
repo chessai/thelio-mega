@@ -194,7 +194,6 @@ no reason.
 
 ## Known issues / follow-ups
 
-- Two evaluation warnings are expected and harmless: `'system' has been renamed
-  to/replaced by 'stdenv.hostPlatform.system'` from an input, and a
-  `boot.zfs.forceImportRoot` default-value warning from the `iso`
-  configuration, which does not set it.
+- One evaluation warning is expected: a `boot.zfs.forceImportRoot`
+  default-value warning from the `iso` configuration, which does not set it.
+  Setting it explicitly in `iso.nix` would silence it.

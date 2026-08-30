@@ -2,6 +2,6 @@
 
 [
   (final: prev: {
-    maestro = maestro.packages.${prev.system}.default;
+    maestro = maestro.packages.${prev.stdenv.hostPlatform.system}.default;
   })
 ]
