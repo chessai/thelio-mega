@@ -18,6 +18,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    maestro = {
+      url = "github:chessai/maestro";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nvim-configs = {
       url = "github:chessai/nvim-configs";
     };
@@ -36,6 +41,7 @@
       extract,
       fenix,
       home-manager,
+      maestro,
       nix-colors,
       nixpkgs,
       nixos-hardware,
@@ -69,6 +75,7 @@
           {
             nixpkgs.overlays = [
               polymc.overlay
+              (final: prev: { maestro = maestro.packages.${prev.system}.default; })
             ];
           }
           #({ pkgs, ... }: {

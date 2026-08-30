@@ -37,6 +37,7 @@
       awscli2
       bind
       bluetuith
+      bubblewrap
       cabal-install
       cachix
       claude-code
@@ -56,6 +57,7 @@
       kooha
       #libnotify
       #perf #linuxKernel.packages.linux_5_15.perf
+      maestro
       qbittorrent
       mosh
       networkmanager_dmenu
