@@ -124,11 +124,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788044318,
-        "narHash": "sha256-bYE5szg+kriVb/qyFvuS9yrWV4qo0VUHw8CCVDgU+ow=",
+        "lastModified": 1788080623,
+        "narHash": "sha256-HzRGj7UTGJSUvedrsAbfAqoQhOEgi1ShYHnuy7KTEJU=",
         "owner": "chessai",
         "repo": "maestro",
-        "rev": "208b30599f0504cb998b3395638737fc64a33124",
+        "rev": "61a2fdbd8473a2ae17cb30f7474498a7d0a74059",
         "type": "github"
       },
       "original": {
