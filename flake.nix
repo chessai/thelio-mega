@@ -66,7 +66,7 @@
           disko.nixosModules.disko
           extract.nixosModules.${system}.extract
           home-manager.nixosModules.home-manager
-          ./configuration.nix
+          ./system
           ({ ... }: {
             home-manager.users.chessai.home.packages = [
               nvim-configs.packages.${system}.neovim
@@ -78,28 +78,6 @@
               (final: prev: { maestro = maestro.packages.${prev.system}.default; })
             ];
           }
-          #({ pkgs, ... }: {
-          #  nixpkgs.overlays = [ fenix.overlays.default ];
-          #  environment.systemPackages =
-          #    let
-          #      base-fenix = pkgs.fenix.complete.withComponents [
-          #        "cargo"
-          #        "clippy"
-          #        "rust-src"
-          #        "rustc"
-          #        "rustfmt"
-          #      ];
-          #      full-fenix = fenix.packages.${system}.combine [
-          #        base-fenix
-          #        fenix.packages.${system}.targets.wasm32-unknown-unknown.latest.rust-std
-          #      ];
-          #    in
-          #    [
-          #      full-fenix
-          #      pkgs.rust-analyzer-nightly
-          #      pkgs.trunk
-          #    ];
-          #})
         ];
       };
 
