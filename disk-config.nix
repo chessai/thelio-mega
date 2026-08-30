@@ -16,13 +16,17 @@ let
     inherit mountpoint;
   };
 
-  dontSnapshot = d: lib.recursiveUpdate d {
-    options."com.sun:auto-snapshot" = "false";
-  };
+  dontSnapshot =
+    d:
+    lib.recursiveUpdate d {
+      options."com.sun:auto-snapshot" = "false";
+    };
 
-  dontMount = d: lib.recursiveUpdate d {
-    options.canmount = "off";
-  };
+  dontMount =
+    d:
+    lib.recursiveUpdate d {
+      options.canmount = "off";
+    };
 in
 {
   disko.devices = {
@@ -82,53 +86,52 @@ in
           compression = "on";
           acltype = "posixacl";
         };
-        datasets =
-          {
-            "data" = dataset "/";
-            "data/etc" = dataset "/etc";
-            "data/home" = dataset "/home";
-            "data/home/chessai" = dataset "/home/chessai";
-            "data/var" = dataset "/var";
-            #"data/var/backup" = dataset "/var/backup";
-            "data/var/lib" = dataset "/var/lib";
-            "data/var/lib/docker" = dontSnapshot (dataset "/var/lib/docker");
-            "data/var/log" = dataset "/var/log";
+        datasets = {
+          "data" = dataset "/";
+          "data/etc" = dataset "/etc";
+          "data/home" = dataset "/home";
+          "data/home/chessai" = dataset "/home/chessai";
+          "data/var" = dataset "/var";
+          #"data/var/backup" = dataset "/var/backup";
+          "data/var/lib" = dataset "/var/lib";
+          "data/var/lib/docker" = dontSnapshot (dataset "/var/lib/docker");
+          "data/var/log" = dataset "/var/log";
 
-            "nixos" = {
-              options = {
-                canmount = "off";
-                mountpoint = "none";
-              };
-              type = "zfs_fs";
+          "nixos" = {
+            options = {
+              canmount = "off";
+              mountpoint = "none";
             };
-            "nixos/nix" = dataset "/nix";
-            "nixos/nix/store" = dontSnapshot {
-              options = {
-                atime = "off";
-                canmount = "on";
-                mountpoint = "legacy";
-              };
-              type = "zfs_fs";
-              mountpoint = "/nix/store";
+            type = "zfs_fs";
+          };
+          "nixos/nix" = dataset "/nix";
+          "nixos/nix/store" = dontSnapshot {
+            options = {
+              atime = "off";
+              canmount = "on";
+              mountpoint = "legacy";
             };
-            "nixos/nix/var" = dataset "/nix/var";
+            type = "zfs_fs";
+            mountpoint = "/nix/store";
+          };
+          "nixos/nix/var" = dataset "/nix/var";
 
-            # coredumps are rather large, and can expire quickly,
-            # so that conflicts with zfs snapshots saving every byte,
-            # so it's on its own dataset with no snapshots
-            "data/coredumps" = dontSnapshot (dataset "/var/lib/systemd/coredump");
+          # coredumps are rather large, and can expire quickly,
+          # so that conflicts with zfs snapshots saving every byte,
+          # so it's on its own dataset with no snapshots
+          "data/coredumps" = dontSnapshot (dataset "/var/lib/systemd/coredump");
 
-            # zfs uses copy on write and requires some free space to delete files when the disk is completely filled
-            "reserved" = {
-              options = {
-                canmount = "off";
-                mountpoint = "none";
-                reservation = "5GiB";
-              };
-              type = "zfs_fs";
+          # zfs uses copy on write and requires some free space to delete files when the disk is completely filled
+          "reserved" = {
+            options = {
+              canmount = "off";
+              mountpoint = "none";
+              reservation = "5GiB";
             };
+            type = "zfs_fs";
           };
         };
       };
     };
+  };
 }
