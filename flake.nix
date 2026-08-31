@@ -103,6 +103,10 @@
             })
             {
               nixpkgs.overlays = import ./overlays { inherit maestro; };
+              # Make maestro's home-manager module (`services.maestro`, MAE-047)
+              # available to every home-manager user; enabled per-user in
+              # home/dev/maestro.nix.
+              home-manager.sharedModules = [ maestro.homeManagerModules.default ];
             }
           ];
         };

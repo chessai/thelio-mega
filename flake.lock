@@ -116,19 +116,41 @@
         "type": "github"
       }
     },
+    "home-manager_2": {
+      "inputs": {
+        "nixpkgs": [
+          "maestro",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1787797243,
+        "narHash": "sha256-8+Q7NOB7RPajRjA4pbCDLzqH+MTjnG9x6LUPLfL2joA=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "99c9ec63390f1d8c14d95d9e8b17cc29cfbd4e11",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
     "maestro": {
       "inputs": {
         "crane": "crane",
+        "home-manager": "home-manager_2",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1788080623,
-        "narHash": "sha256-HzRGj7UTGJSUvedrsAbfAqoQhOEgi1ShYHnuy7KTEJU=",
+        "lastModified": 1788131493,
+        "narHash": "sha256-BoqOi9NQg8tfvV97BTt1S1SH8bxTRdrca1KJIfH10UY=",
         "owner": "chessai",
         "repo": "maestro",
-        "rev": "61a2fdbd8473a2ae17cb30f7474498a7d0a74059",
+        "rev": "4624c2af7c72f04efb71b719c38b8c2de6a52bff",
         "type": "github"
       },
       "original": {

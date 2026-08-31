@@ -29,6 +29,7 @@
       ./dev/claude.nix
       ./dev/direnv.nix
       ./dev/git.nix
+      ./dev/maestro.nix
       ./dev/ssh.nix
       ./dev/vscode.nix
 
