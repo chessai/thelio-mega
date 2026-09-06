@@ -27,6 +27,7 @@
       ./desktop
 
       ./dev/claude.nix
+      ./dev/codex.nix
       ./dev/direnv.nix
       ./dev/git.nix
       ./dev/maestro.nix
