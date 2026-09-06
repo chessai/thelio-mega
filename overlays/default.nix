@@ -1,4 +1,4 @@
-{ maestro }:
+{ claude-code, maestro }:
 
 [
   # maestro's own overlay (adds `pkgs.maestro`), built from the same crane
@@ -6,4 +6,6 @@
   # `final: prev: { maestro = maestro.packages.<system>.default; }` now that
   # maestro exposes `overlays.default` itself (MAE-047).
   maestro.overlays.default
+
+  claude-code.overlays.default
 ]

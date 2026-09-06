@@ -41,10 +41,15 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    claude-code = {
+      url = "github:sadjow/claude-code-nix";
+    };
   };
 
   outputs =
     {
+      claude-code,
       disko,
       extract,
       fenix,
@@ -102,7 +107,7 @@
               ];
             })
             {
-              nixpkgs.overlays = import ./overlays { inherit maestro; };
+              nixpkgs.overlays = import ./overlays { inherit claude-code maestro; };
               # Make maestro's home-manager module (`services.maestro`, MAE-047)
               # available to every home-manager user; enabled per-user in
               # home/dev/maestro.nix.
