@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 let
-  claudeDir = "/home/chessai/.claude";
+  claudeDir = "${config.home.homeDirectory}/.claude";
 
   claudeBashCommand = cmd: "Bash(${cmd} :*)";
 
@@ -9,6 +9,7 @@ let
     includeCoAuthoredBy = false;
     autoUpdatesChannel = "stable";
     defaultMode = "auto";
+    model = "claude-fable-5-1";
 
     # May God have mercy on my soul.
     outputStyle = "Concise";
