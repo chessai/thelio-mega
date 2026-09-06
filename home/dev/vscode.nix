@@ -53,10 +53,18 @@ in
 
         claudeCode = {
           preferredLocation = "sidebar";
-          selectedModel = "claude-fable-5";
+          selectedModel = "claude-fable-5-1";
           environmentVariables = [ ];
           disableLoginPrompt = false;
           allowDangerouslySkipPermissions = true;
+        };
+
+        chatgpt = {
+          commentCodeLensEnabled = true;
+          openOnStartup = false;
+          followUpQueueMode = "steer";
+          composerEnterBehavior = "enter";
+          reviewDelivery = "inline";
         };
       };
 
@@ -88,8 +96,15 @@ in
           {
             name = "claude-code";
             publisher = "anthropic";
-            version = "2.1.237";
-            sha256 = "sha256-OkUNFovJqm/F65O9p47lPgne0mjXqMKVPpjSbP2vsHo=";
+            version = "2.1.258";
+            sha256 = "sha256-eIJB3cp3HeD5DGcr/mp4kjkY/gMFp9oam8cGKeKSOMc=";
+          }
+
+          {
+            name = "chatgpt";
+            publisher = "openai";
+            version = "26.5825.51511";
+            sha256 = "sha256-VX6AWYCWR4k79fyG+6FRVSjBYRr+MdVieSZsL83iogQ=";
           }
         ];
     };
